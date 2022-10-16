@@ -13,7 +13,7 @@ public class User extends BasedEntity implements Serializable {
     private String userEmail;
     private BigDecimal userCountOfMoney;
     private boolean accountVerified;
-    private UserRole userRole;
+    private String userRole;
 
     public User(){
 
@@ -75,11 +75,11 @@ public class User extends BasedEntity implements Serializable {
         this.accountVerified = accountVerified;
     }
 
-    public UserRole getUserRole() {
+    public String getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(UserRole userRole) {
+    public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
 
@@ -98,8 +98,8 @@ public class User extends BasedEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
+        return "User{"+ super.toString() +
+                ", username='" + username + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userEmail='" + userEmail + '\'' +

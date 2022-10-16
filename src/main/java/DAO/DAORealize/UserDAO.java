@@ -50,7 +50,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         return userDAO;
     }
 
-    public void addTrain(User user){
+    public void addUser(User user){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
@@ -290,7 +290,8 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         BigDecimal userCountOfMoney = rs.getBigDecimal(USER_COUNT_OF_MONEY);
         boolean accountVerified = rs.getBoolean(ACCOUNT_VERIFIED);
         String userEmail = rs.getString(USER_EMAIL);
-        //Role userRole =
+        int role_id = rs.getInt(ROLE_ID);
+
         user.setID(id);
         user.setCreateTime(createTime);
         user.setUpdateTime(updateTime);

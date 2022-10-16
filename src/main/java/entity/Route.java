@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Route extends BasedEntity implements Serializable {
 
@@ -87,5 +88,33 @@ public class Route extends BasedEntity implements Serializable {
 
     public void setTrain(String train) {
         this.train = train;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Route)) return false;
+        Route route = (Route) o;
+        return numberOfFreeSeats == route.numberOfFreeSeats && relevant == route.relevant && Objects.equals(startStation, route.startStation) && Objects.equals(departureTime, route.departureTime) && Objects.equals(travelTime, route.travelTime) && Objects.equals(arrivalStation, route.arrivalStation) && Objects.equals(arrivalTime, route.arrivalTime) && Objects.equals(priseOfTicket, route.priseOfTicket) && Objects.equals(train, route.train);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startStation, departureTime, travelTime, arrivalStation, arrivalTime, numberOfFreeSeats, priseOfTicket, train, relevant);
+    }
+
+    @Override
+    public String toString() {
+        return "Route{" + super.toString() +
+                ", startStation='" + startStation + '\'' +
+                ", departureTime=" + departureTime +
+                ", travelTime=" + travelTime +
+                ", arrivalStation='" + arrivalStation + '\'' +
+                ", arrivalTime=" + arrivalTime +
+                ", numberOfFreeSeats=" + numberOfFreeSeats +
+                ", priseOfTicket=" + priseOfTicket +
+                ", train='" + train + '\'' +
+                ", relevant=" + relevant +
+                '}';
     }
 }

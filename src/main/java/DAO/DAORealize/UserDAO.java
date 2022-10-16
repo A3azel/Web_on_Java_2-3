@@ -1,6 +1,7 @@
 package DAO.DAORealize;
 
 import DAO.AbstractDAO;
+import DAO.DAOFactory;
 import DAO.DAOInterface.UserDAOI;
 import entity.User;
 import helpDAO.DAOHelperMethods;
@@ -283,6 +284,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         int id = rs.getInt(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
+        RoleDAO roleDAO = DAOFactory.getInstance().getRoleDAO();
         String username = rs.getString(USERNAME);
         String firstName = rs.getString(FIRST_NAME);
         String lastName = rs.getString(LAST_NAME);
@@ -290,7 +292,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         BigDecimal userCountOfMoney = rs.getBigDecimal(USER_COUNT_OF_MONEY);
         boolean accountVerified = rs.getBoolean(ACCOUNT_VERIFIED);
         String userEmail = rs.getString(USER_EMAIL);
-        int role_id = rs.getInt(ROLE_ID);
+        String userRole = roleDAO.findUserRoleByID(rs.getInt(ROLE_ID));
 
         user.setID(id);
         user.setCreateTime(createTime);
@@ -302,6 +304,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         user.setUserCountOfMoney(userCountOfMoney);
         user.setAccountVerified(accountVerified);
         user.setUserEmail(userEmail);
+        user.setUserRole(userRole);
 
         return user;
     }

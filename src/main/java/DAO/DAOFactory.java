@@ -45,4 +45,8 @@ public class DAOFactory {
         return UserDAO.getInstance();
     }
 
+    public RoleDAO getRoleDAO(){
+        return RoleDAO.getInstance();
+    }
+
 }

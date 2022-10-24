@@ -1,8 +1,8 @@
-package DAO.DAORealize;
+package DAO.daoRealize;
 
 import DAO.AbstractDAO;
 import DAO.DAOFactory;
-import DAO.DAOInterface.UserDAOI;
+import DAO.daoInterface.UserDAO;
 import entity.User;
 import helpDAO.DAOHelperMethods;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class UserDAO extends AbstractDAO implements UserDAOI {
+public class UserDAOImpl extends AbstractDAO implements UserDAO {
     // table filed
     private static final String ID = "id";
     private static final String CREATE_TIME = "create_time";
@@ -38,19 +38,20 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
     private static final String SPEND_MONEY = "UPDATE user_info SET user_count_of_money = user_count_of_money - ? WHERE id = ?";
     private static final String IS_USER_EXIST = "SELECT * FROM user_info WHERE username = ? AND user_password = ?";
 
-    private static UserDAO userDAO;
+    private static UserDAOImpl userDAO;
 
-    private UserDAO(){
+    private UserDAOImpl(){
 
     }
 
-    public static synchronized UserDAO getInstance(){
+    public static synchronized UserDAOImpl getInstance(){
         if(userDAO == null){
-            return new UserDAO();
+            return new UserDAOImpl();
         }
         return userDAO;
     }
 
+    @Override
     public void addUser(User user){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -85,6 +86,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         }
     }
 
+    @Override
     public List<User> findAllUsers(){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -113,6 +115,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         return userList;
     }
 
+    @Override
     public User findUserByUsername(String username){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -141,6 +144,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         return new User();
     }
 
+    @Override
     public User findUserByID(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -169,6 +173,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         return new User();
     }
 
+    @Override
     public void setUserAccountVerified(String username){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -195,6 +200,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         }
     }
 
+    @Override
     public void topUpAccount(BigDecimal money,String username) {
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -222,6 +228,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         }
     }
 
+    @Override
     public void spendMoney(BigDecimal money,String username){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -251,6 +258,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
     }
 
 // need to test
+    @Override
     public boolean isUserExist(String username,String password){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -284,7 +292,7 @@ public class UserDAO extends AbstractDAO implements UserDAOI {
         int id = rs.getInt(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
-        RoleDAO roleDAO = DAOFactory.getInstance().getRoleDAO();
+        RoleDAOImpl roleDAO = DAOFactory.getInstance().getRoleDAO();
         String username = rs.getString(USERNAME);
         String firstName = rs.getString(FIRST_NAME);
         String lastName = rs.getString(LAST_NAME);

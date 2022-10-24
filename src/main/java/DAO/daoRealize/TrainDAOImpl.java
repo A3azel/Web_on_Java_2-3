@@ -1,7 +1,7 @@
-package DAO.DAORealize;
+package DAO.daoRealize;
 
 import DAO.AbstractDAO;
-import DAO.DAOInterface.TrainDAOI;
+import DAO.daoInterface.TrainDAO;
 import entity.Train;
 import helpDAO.DAOHelperMethods;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class TrainDAO extends AbstractDAO implements TrainDAOI {
+public class TrainDAOImpl extends AbstractDAO implements TrainDAO {
     // table filed
     private static final String ID = "id";
     private static final String CREATE_TIME = "create_time";
@@ -28,19 +28,20 @@ public class TrainDAO extends AbstractDAO implements TrainDAOI {
     private static final String FIND_TRAIN_BY_ID = "SELECT * FROM train_info WHERE id = ?";
     private static final String FIND_ALL_TRAIN = "SELECT * FROM train_info";
 
-    private static TrainDAO trainDAO;
+    private static TrainDAOImpl trainDAO;
 
-    private TrainDAO(){
+    private TrainDAOImpl(){
 
     }
 
-    public static synchronized TrainDAO getInstance(){
+    public static synchronized TrainDAOImpl getInstance(){
         if(trainDAO == null){
-            return new TrainDAO();
+            return new TrainDAOImpl();
         }
         return trainDAO;
     }
 
+    @Override
     public void addTrain(Train train){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -71,7 +72,7 @@ public class TrainDAO extends AbstractDAO implements TrainDAOI {
         }
     }
 
-
+    @Override
     public void updateTrain(Train train){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -102,6 +103,7 @@ public class TrainDAO extends AbstractDAO implements TrainDAOI {
         }
     }
 
+    @Override
     public List<Train> findAllTrains(){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -130,6 +132,7 @@ public class TrainDAO extends AbstractDAO implements TrainDAOI {
         return trainList;
     }
 
+    @Override
     public Train findTrainByTrainNumber(String trainNumber){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -158,6 +161,7 @@ public class TrainDAO extends AbstractDAO implements TrainDAOI {
         return new Train();
     }
 
+    @Override
     public Train findTrainByID(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -186,6 +190,7 @@ public class TrainDAO extends AbstractDAO implements TrainDAOI {
         return new Train();
     }
 
+    @Override
     public void setTrainRelevant(String trainNumber){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;

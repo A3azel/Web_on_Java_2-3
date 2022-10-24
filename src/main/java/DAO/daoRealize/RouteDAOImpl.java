@@ -1,8 +1,8 @@
-package DAO.DAORealize;
+package DAO.daoRealize;
 
 import DAO.AbstractDAO;
 import DAO.DAOFactory;
-import DAO.DAOInterface.RouteDAOI;
+import DAO.daoInterface.RouteDAO;
 import entity.Route;
 import helpDAO.DAOHelperMethods;
 
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class RouteDAO extends AbstractDAO implements RouteDAOI {
+public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     // table filed
     private static final String ID = "id";
     private static final String CREATE_TIME = "create_time";
@@ -43,19 +43,20 @@ public class RouteDAO extends AbstractDAO implements RouteDAOI {
     private static final String FIND_ROUTE_BY_ID = "SELECT * FROM route WHERE id = ?";
     private static final String FIND_ALL_ROUTES = "SELECT * FROM route";
 
-    private static RouteDAO routeDAO;
+    private static RouteDAOImpl routeDAO;
 
-    private RouteDAO(){
+    private RouteDAOImpl(){
 
     }
 
-    public static synchronized RouteDAO getInstance(){
+    public static synchronized RouteDAOImpl getInstance(){
         if(routeDAO == null){
-            return new RouteDAO();
+            return new RouteDAOImpl();
         }
         return routeDAO;
     }
 
+    @Override
     public void addRoute(Route route){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -64,8 +65,8 @@ public class RouteDAO extends AbstractDAO implements RouteDAOI {
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(ADD_ROUTE);
             Calendar calendar = Calendar.getInstance();
-            StationDAO stationDAO = DAOFactory.getInstance().getStationDAO();
-            TrainDAO trainDAO = DAOFactory.getInstance().getTrainDAO();
+            StationDAOImpl stationDAO = DAOFactory.getInstance().getStationDAO();
+            TrainDAOImpl trainDAO = DAOFactory.getInstance().getTrainDAO();
             int startStationID = stationDAO.findStationByStationName(route.getStartStation()).getID();
             int arrivalStationID = stationDAO.findStationByStationName(route.getArrivalStation()).getID();
             int trainID = trainDAO.findTrainByTrainNumber(route.getTrain()).getID();
@@ -97,7 +98,8 @@ public class RouteDAO extends AbstractDAO implements RouteDAOI {
         }
     }
 
-    public List<Route> findAllUsers(){
+    @Override
+    public List<Route> findAllRouts(){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         List<Route> routeList = new ArrayList<>();
@@ -125,6 +127,7 @@ public class RouteDAO extends AbstractDAO implements RouteDAOI {
         return routeList;
     }
 
+    @Override
     public Route findRouteByID(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -153,6 +156,7 @@ public class RouteDAO extends AbstractDAO implements RouteDAOI {
         return new Route();
     }
 
+    @Override
     public void setRouteRelevant(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -178,13 +182,14 @@ public class RouteDAO extends AbstractDAO implements RouteDAOI {
         }
     }
 
+    @Override
     public List<Route> findAllBetweenTwoStations(String startStation, String arrivalStation, LocalDate data, LocalTime localTime){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         List<Route> routeList = new ArrayList<>();
         try {
             con.setAutoCommit(false);
-            StationDAO stationDAO = DAOFactory.getInstance().getStationDAO();
+            StationDAOImpl stationDAO = DAOFactory.getInstance().getStationDAO();
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(FIND_ROUTE_BETWEEN_TWO_STATIONS);
             preparedStatement.setInt(1,stationDAO.findStationByStationName(startStation).getID());
@@ -213,12 +218,13 @@ public class RouteDAO extends AbstractDAO implements RouteDAOI {
         return routeList;
     }
 
+    @Override
     public List<Route> findAllBetweenTwoCites(String startCity, String arrivalCity, LocalDate data, LocalTime localTime){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         List<Route> routeList = new ArrayList<>();
         try {
-            CityDAO cityDAO = DAOFactory.getInstance().getCityDAO();
+            CityDAOImpl cityDAO = DAOFactory.getInstance().getCityDAO();
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(FIND_ROUTE_BETWEEN_TWO_CITES);
@@ -253,8 +259,8 @@ public class RouteDAO extends AbstractDAO implements RouteDAOI {
         int id = rs.getInt(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
-        StationDAO stationDAO = DAOFactory.getInstance().getStationDAO();
-        TrainDAO trainDAO = DAOFactory.getInstance().getTrainDAO();
+        StationDAOImpl stationDAO = DAOFactory.getInstance().getStationDAO();
+        TrainDAOImpl trainDAO = DAOFactory.getInstance().getTrainDAO();
         String startStation = stationDAO.findStationByID(rs.getInt(START_STATION_ID)).getStationName();
         LocalDateTime departureTime = rs.getTimestamp(DEPARTURE_TIME).toLocalDateTime();
         LocalTime travelTime = LocalTime.parse(new SimpleDateFormat("HH:mm").format(rs.getTime(TRAVEL_TIME)));

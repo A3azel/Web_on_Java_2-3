@@ -1,6 +1,6 @@
 package DAO;
 
-import DAO.DAORealize.*;
+import DAO.daoRealize.*;
 
 public class DAOFactory {
 
@@ -21,32 +21,32 @@ public class DAOFactory {
         return factory;
     }
 
-    public CityDAO getCityDAO(){
-        return CityDAO.getInstance();
+    public CityDAOImpl getCityDAO(){
+        return CityDAOImpl.getInstance();
     }
 
-    public OrderDAO getOrderDAO(){
-        return OrderDAO.getInstance();
+    public OrderDAOImpl getOrderDAO(){
+        return OrderDAOImpl.getInstance();
     }
 
-    public RouteDAO getRouteDAO(){
-        return RouteDAO.getInstance();
+    public RouteDAOImpl getRouteDAO(){
+        return RouteDAOImpl.getInstance();
     }
 
-    public StationDAO getStationDAO(){
-        return StationDAO.getInstance();
+    public StationDAOImpl getStationDAO(){
+        return StationDAOImpl.getInstance();
     }
 
-    public TrainDAO getTrainDAO(){
-        return TrainDAO.getInstance();
+    public TrainDAOImpl getTrainDAO(){
+        return TrainDAOImpl.getInstance();
     }
 
-    public UserDAO getUserDAO(){
-        return UserDAO.getInstance();
+    public UserDAOImpl getUserDAO(){
+        return UserDAOImpl.getInstance();
     }
 
-    public RoleDAO getRoleDAO(){
-        return RoleDAO.getInstance();
+    public RoleDAOImpl getRoleDAO(){
+        return RoleDAOImpl.getInstance();
     }
 
 }

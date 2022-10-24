@@ -1,8 +1,8 @@
-package DAO.DAORealize;
+package DAO.daoRealize;
 
 import DAO.AbstractDAO;
 import DAO.DAOFactory;
-import DAO.DAOInterface.OrderDAOI;
+import DAO.daoInterface.OrderDAO;
 import entity.Order;
 import entity.Route;
 import entity.User;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class OrderDAO extends AbstractDAO implements OrderDAOI {
+public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
     // table filed
     private static final String ID = "id";
     private static final String CREATE_TIME = "create_time";
@@ -37,19 +37,20 @@ public class OrderDAO extends AbstractDAO implements OrderDAOI {
     private static final String FIND_ALL_ORDERS = "SELECT * FROM purchased_tickets";
     private static final String IS_ORDER_EXIST = "SELECT * FROM purchased_tickets WHERE id = ? ";
 
-    private static OrderDAO orderDAO;
+    private static OrderDAOImpl orderDAO;
 
-    private OrderDAO(){
+    private OrderDAOImpl(){
 
     }
 
-    public static synchronized OrderDAO getInstance(){
+    public static synchronized OrderDAOImpl getInstance(){
         if(orderDAO == null){
-            return new OrderDAO();
+            return new OrderDAOImpl();
         }
         return orderDAO;
     }
 
+    @Override
     public void addOrder(Order order){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -82,6 +83,7 @@ public class OrderDAO extends AbstractDAO implements OrderDAOI {
         }
     }
 
+    @Override
     public List<Order> findAllOrders(){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -110,6 +112,7 @@ public class OrderDAO extends AbstractDAO implements OrderDAOI {
         return orderList;
     }
 
+    @Override
     public List<Order> findAllUsersOrders(String username){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -139,6 +142,7 @@ public class OrderDAO extends AbstractDAO implements OrderDAOI {
         return orderList;
     }
 
+    @Override
     public Order findOrderByID(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -167,6 +171,7 @@ public class OrderDAO extends AbstractDAO implements OrderDAOI {
         throw new IllegalArgumentException("");
     }
 
+    @Override
     public void setOrderStatus(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -194,6 +199,7 @@ public class OrderDAO extends AbstractDAO implements OrderDAOI {
     }
 
     // need to test
+    @Override
     public boolean isOrderExist(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -222,8 +228,8 @@ public class OrderDAO extends AbstractDAO implements OrderDAOI {
 
     public Order helpToBuildOrder(ResultSet rs) throws SQLException {
         Order order = new Order();
-        UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-        RouteDAO routeDAO = DAOFactory.getInstance().getRouteDAO();
+        UserDAOImpl userDAO = DAOFactory.getInstance().getUserDAO();
+        RouteDAOImpl routeDAO = DAOFactory.getInstance().getRouteDAO();
 
         int id = rs.getInt(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();

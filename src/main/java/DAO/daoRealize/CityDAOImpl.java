@@ -1,7 +1,6 @@
-package DAO.DAORealize;
+package DAO.daoRealize;
 
 import DAO.AbstractDAO;
-import DAO.DAOInterface.CityDAOI;
 import entity.City;
 import helpDAO.DAOHelperMethods;
 
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class CityDAO extends AbstractDAO implements CityDAOI {
+public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO {
     // table filed
     private static final String ID = "id";
     private static final String CREATE_TIME = "create_time";
@@ -27,18 +26,19 @@ public class CityDAO extends AbstractDAO implements CityDAOI {
     private static final String FIND_CITY_BY_ID = "SELECT * FROM cities WHERE id = ?";
     private static final String FIND_ALL_CITES = "SELECT * FROM cities";
 
-    private static CityDAO cityDAO;
+    private static CityDAOImpl cityDAO;
 
-    private CityDAO() {
+    private CityDAOImpl() {
     }
 
-    public static synchronized CityDAO getInstance(){
+    public static synchronized CityDAOImpl getInstance(){
         if(cityDAO == null){
-            return new CityDAO();
+            return new CityDAOImpl();
         }
         return cityDAO;
     }
 
+    @Override
     public void addCity(City city){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -68,7 +68,7 @@ public class CityDAO extends AbstractDAO implements CityDAOI {
         }
     }
 
-
+    @Override
     public void updateCity(City city){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -98,6 +98,7 @@ public class CityDAO extends AbstractDAO implements CityDAOI {
         }
     }
 
+    @Override
     public List<City> findAllCites(){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -126,6 +127,7 @@ public class CityDAO extends AbstractDAO implements CityDAOI {
         return cityList;
     }
 
+    @Override
     public City findCityByCityName(String cityName){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -154,6 +156,7 @@ public class CityDAO extends AbstractDAO implements CityDAOI {
         return new City();
     }
 
+    @Override
     public City findCityByID(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -182,6 +185,7 @@ public class CityDAO extends AbstractDAO implements CityDAOI {
         return new City();
     }
 
+    @Override
     public void setCityRelevant(String cityName){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;

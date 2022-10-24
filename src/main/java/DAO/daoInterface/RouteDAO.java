@@ -1,0 +1,17 @@
+package DAO.daoInterface;
+
+import entity.Route;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+public interface RouteDAO {
+    void addRoute(Route route);
+    List<Route> findAllRouts();
+    Route findRouteByID(int id);
+    void setRouteRelevant(int id);
+    List<Route> findAllBetweenTwoStations(String startStation, String arrivalStation, LocalDate data, LocalTime localTime);
+    List<Route> findAllBetweenTwoCites(String startCity, String arrivalCity, LocalDate data, LocalTime localTime);
+
+}

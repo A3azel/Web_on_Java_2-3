@@ -1,8 +1,8 @@
-package DAO.DAORealize;
+package DAO.daoRealize;
 
 import DAO.AbstractDAO;
 import DAO.DAOFactory;
-import DAO.DAOInterface.StationDAOI;
+import DAO.daoInterface.StationDAO;
 import entity.Station;
 import helpDAO.DAOHelperMethods;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class StationDAO extends AbstractDAO implements StationDAOI {
+public class StationDAOImpl extends AbstractDAO implements StationDAO {
     // table filed
     private static final String ID = "id";
     private static final String CREATE_TIME = "create_time";
@@ -29,19 +29,20 @@ public class StationDAO extends AbstractDAO implements StationDAOI {
     private static final String FIND_STATION_BY_ID = "SELECT * FROM station_list WHERE ID = ?";
     private static final String FIND_ALL_STATION = "SELECT * FROM station_list";
 
-    private static StationDAO stationDAO;
+    private static StationDAOImpl stationDAO;
 
-    private StationDAO(){
+    private StationDAOImpl(){
 
     }
 
-    public static synchronized StationDAO getInstance(){
+    public static synchronized StationDAOImpl getInstance(){
         if(stationDAO == null){
-            return new StationDAO();
+            return new StationDAOImpl();
         }
         return stationDAO;
     }
 
+    @Override
     public void addStation(Station station){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -72,6 +73,7 @@ public class StationDAO extends AbstractDAO implements StationDAOI {
         }
     }
 
+    @Override
     public void updateStation(Station station){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -102,6 +104,7 @@ public class StationDAO extends AbstractDAO implements StationDAOI {
         }
     }
 
+    @Override
     public List<Station> findAllStations(){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -130,6 +133,7 @@ public class StationDAO extends AbstractDAO implements StationDAOI {
         return stationList;
     }
 
+    @Override
     public Station findStationByStationName(String stationName){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -158,6 +162,7 @@ public class StationDAO extends AbstractDAO implements StationDAOI {
         return new Station();
     }
 
+    @Override
     public Station findStationByID(int id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -186,6 +191,7 @@ public class StationDAO extends AbstractDAO implements StationDAOI {
         return new Station();
     }
 
+    @Override
     public void setStationRelevant(String stationName){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;

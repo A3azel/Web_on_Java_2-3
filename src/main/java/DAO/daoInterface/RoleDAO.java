@@ -1,5 +1,6 @@
 package DAO.daoInterface;
 
 public interface RoleDAO {
-    String findUserRoleByID(int id);
+    String findUserRoleByID(Long id);
+    String findIDByUserRole(String role);
 }

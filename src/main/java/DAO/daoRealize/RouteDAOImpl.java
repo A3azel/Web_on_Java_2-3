@@ -67,18 +67,18 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             Calendar calendar = Calendar.getInstance();
             StationDAOImpl stationDAO = DAOFactory.getInstance().getStationDAO();
             TrainDAOImpl trainDAO = DAOFactory.getInstance().getTrainDAO();
-            int startStationID = stationDAO.findStationByStationName(route.getStartStation()).getID();
-            int arrivalStationID = stationDAO.findStationByStationName(route.getArrivalStation()).getID();
-            int trainID = trainDAO.findTrainByTrainNumber(route.getTrain()).getID();
+            Long startStationID = stationDAO.findStationByStationName(route.getStartStation()).getID();
+            Long arrivalStationID = stationDAO.findStationByStationName(route.getArrivalStation()).getID();
+            Long trainID = trainDAO.findTrainByTrainNumber(route.getTrain()).getID();
             java.sql.Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
             preparedStatement.setTimestamp(1,timestamp);
             preparedStatement.setTimestamp(2,timestamp);
-            preparedStatement.setInt(3,startStationID);
+            preparedStatement.setLong(3,startStationID);
             preparedStatement.setTimestamp(4, Timestamp.valueOf(route.getDepartureTime()));
             preparedStatement.setTime(5, Time.valueOf(route.getTravelTime()));
-            preparedStatement.setInt(6,arrivalStationID);
+            preparedStatement.setLong(6,arrivalStationID);
             preparedStatement.setTimestamp(7, Timestamp.valueOf(route.getArrivalTime()));
-            preparedStatement.setInt(8,trainID);
+            preparedStatement.setLong(8,trainID);
             preparedStatement.setInt(9,route.getNumberOfFreeSeats());
             preparedStatement.setBigDecimal(10,route.getPriseOfTicket());
             preparedStatement.setBoolean(11,true);
@@ -128,14 +128,14 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     }
 
     @Override
-    public Route findRouteByID(int id){
+    public Route findRouteByID(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_ROUTE_BY_ID);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setLong(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             if(rs.next()){
                 con.commit();
@@ -157,7 +157,7 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     }
 
     @Override
-    public void setRouteRelevant(int id){
+    public void setRouteRelevant(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
@@ -192,8 +192,8 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             StationDAOImpl stationDAO = DAOFactory.getInstance().getStationDAO();
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(FIND_ROUTE_BETWEEN_TWO_STATIONS);
-            preparedStatement.setInt(1,stationDAO.findStationByStationName(startStation).getID());
-            preparedStatement.setInt(2,stationDAO.findStationByStationName(arrivalStation).getID());
+            preparedStatement.setLong(1,stationDAO.findStationByStationName(startStation).getID());
+            preparedStatement.setLong(2,stationDAO.findStationByStationName(arrivalStation).getID());
             LocalDateTime localDateTime = LocalDateTime.of(data,localTime);
             LocalDateTime finalLocalDateTime = localDateTime.plusDays(7);
             preparedStatement.setTimestamp(3, Timestamp.valueOf(localDateTime));
@@ -228,8 +228,8 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(FIND_ROUTE_BETWEEN_TWO_CITES);
-            preparedStatement.setInt(1,cityDAO.findCityByCityName(startCity).getID());
-            preparedStatement.setInt(2,cityDAO.findCityByCityName(arrivalCity).getID());
+            preparedStatement.setLong(1,cityDAO.findCityByCityName(startCity).getID());
+            preparedStatement.setLong(2,cityDAO.findCityByCityName(arrivalCity).getID());
             LocalDateTime localDateTime = LocalDateTime.of(data,localTime);
             LocalDateTime finalLocalDateTime = localDateTime.plusDays(7);
             preparedStatement.setTimestamp(3, Timestamp.valueOf(localDateTime));
@@ -256,19 +256,19 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
 
     public Route helpToBuildRote(ResultSet rs) throws SQLException {
         Route route = new Route();
-        int id = rs.getInt(ID);
+        Long id = rs.getLong(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
         StationDAOImpl stationDAO = DAOFactory.getInstance().getStationDAO();
         TrainDAOImpl trainDAO = DAOFactory.getInstance().getTrainDAO();
-        String startStation = stationDAO.findStationByID(rs.getInt(START_STATION_ID)).getStationName();
+        String startStation = stationDAO.findStationByID(rs.getLong(START_STATION_ID)).getStationName();
         LocalDateTime departureTime = rs.getTimestamp(DEPARTURE_TIME).toLocalDateTime();
         LocalTime travelTime = LocalTime.parse(new SimpleDateFormat("HH:mm").format(rs.getTime(TRAVEL_TIME)));
-        String arrivalStation = stationDAO.findStationByID(rs.getInt(ARRIVAL_STATION_ID)).getStationName();
+        String arrivalStation = stationDAO.findStationByID(rs.getLong(ARRIVAL_STATION_ID)).getStationName();
         LocalDateTime arrivalTime = rs.getTimestamp(ARRIVAL_TIME).toLocalDateTime();
         int numberOfFreeSeats = rs.getInt(NUMBER_OF_FREE_SEATS);
         BigDecimal priseOfTicket = rs.getBigDecimal(PRISE_OF_TICKET);
-        String train = trainDAO.findTrainByID(rs.getInt(TRAIN_ID)).getTrainNumber();
+        String train = trainDAO.findTrainByID(rs.getLong(TRAIN_ID)).getTrainNumber();
         boolean relevant = rs.getBoolean(RELEVANT);
         route.setID(id);
         route.setCreateTime(createTime);

@@ -30,7 +30,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     // SQL requests
     private static final String ADD_USER = "INSERT INTO user_info(create_time, update_time, username, first_name, last_name, user_password" +
             ", user_count_of_money, account_verified, user_email, role_id) VALUE(?,?,?,?,?,?,?,?,?,?)";
-    private static final String SET_USER_ACCOUNT_VERIFIED = "UPDATE user_info SET account_verified = ? WHERE id = ?";
+    private static final String SET_USER_ACCOUNT_VERIFIED = "UPDATE user_info SET account_verified = ? WHERE username = ?";
     private static final String FIND_USER = "SELECT * FROM user_info WHERE username = ?";
     private static final String FIND_USER_BY_ID = "SELECT * FROM user_info WHERE id = ?";
     private static final String FIND_ALL_USERS = "SELECT * FROM user_info";
@@ -58,7 +58,12 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            if(findUserByUsername(user.getUsername())!= null){
+                System.out.println("user already exist");
+                return;
+            }
             preparedStatement = con.prepareStatement(ADD_USER);
+            RoleDAOImpl roleDAO = DAOFactory.getInstance().getRoleDAO();
             Calendar calendar = Calendar.getInstance();
             java.sql.Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
             preparedStatement.setTimestamp(1,timestamp);
@@ -70,6 +75,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             preparedStatement.setBigDecimal(7, user.getUserCountOfMoney());
             preparedStatement.setBoolean(8, user.isAccountVerified());
             preparedStatement.setString(9, user.getUserEmail());
+            preparedStatement.setInt(10, Integer.parseInt(roleDAO.findIDByUserRole(user.getUserRole())));
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -145,14 +151,14 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    public User findUserByID(int id){
+    public User findUserByID(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_USER_BY_ID);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setLong(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             if(rs.next()){
                 con.commit();
@@ -181,6 +187,10 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(SET_USER_ACCOUNT_VERIFIED);
+            if(findUserByUsername(username)==null){
+                System.out.println("user not found");
+                return;
+            }
             boolean relevant = findUserByUsername(username).isAccountVerified();
             preparedStatement.setBoolean(1,!relevant);
             preparedStatement.setString(2,username);
@@ -289,7 +299,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     // add role
     public User helpToBuildUser(ResultSet rs) throws SQLException {
         User user = new User();
-        int id = rs.getInt(ID);
+        Long id = rs.getLong(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
         RoleDAOImpl roleDAO = DAOFactory.getInstance().getRoleDAO();
@@ -300,7 +310,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         BigDecimal userCountOfMoney = rs.getBigDecimal(USER_COUNT_OF_MONEY);
         boolean accountVerified = rs.getBoolean(ACCOUNT_VERIFIED);
         String userEmail = rs.getString(USER_EMAIL);
-        String userRole = roleDAO.findUserRoleByID(rs.getInt(ROLE_ID));
+        String userRole = roleDAO.findUserRoleByID(rs.getLong(ROLE_ID));
 
         user.setID(id);
         user.setCreateTime(createTime);

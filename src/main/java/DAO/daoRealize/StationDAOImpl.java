@@ -56,7 +56,7 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             preparedStatement.setTimestamp(2,timestamp);
             preparedStatement.setString(3,station.getStationName());
             preparedStatement.setBoolean(4,true);
-            preparedStatement.setInt(5, station.getCity().getID());
+            preparedStatement.setLong(5, station.getCity().getID());
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -86,8 +86,8 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             preparedStatement.setTimestamp(1,timestamp);
             preparedStatement.setString(2,station.getStationName());
             preparedStatement.setBoolean(3, station.isRelevant());
-            preparedStatement.setInt(4,station.getID());
-            preparedStatement.setInt(5,station.getCity().getID());
+            preparedStatement.setLong(4,station.getID());
+            preparedStatement.setLong(5,station.getCity().getID());
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -163,14 +163,14 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
     }
 
     @Override
-    public Station findStationByID(int id){
+    public Station findStationByID(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_STATION_BY_ID);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setLong(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             if(rs.next()){
                 con.commit();
@@ -220,12 +220,12 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
 
     public Station helpToBuildStation(ResultSet rs) throws SQLException {
         Station station = new Station();
-        int id = rs.getInt(ID);
+        Long id = rs.getLong(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
         String stationName = rs.getString(STATION_NAME);
         boolean relevant = rs.getBoolean(RELEVANT);
-        int cityID = rs.getInt(CITY_ID);
+        Long cityID = rs.getLong(CITY_ID);
         station.setID(id);
         station.setCreateTime(createTime);
         station.setUpdateTime(updateTime);

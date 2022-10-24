@@ -65,8 +65,8 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             preparedStatement.setBigDecimal(3, order.getOrderPrise());
             preparedStatement.setInt(4, order.getCountOfPurchasedTickets());
             preparedStatement.setBoolean(5, order.isOrderStatus());
-            preparedStatement.setInt(6, order.getUser().getID());
-            preparedStatement.setInt(7, order.getRoute().getID() );
+            preparedStatement.setLong(6, order.getUser().getID());
+            preparedStatement.setLong(7, order.getRoute().getID() );
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -143,14 +143,14 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
     }
 
     @Override
-    public Order findOrderByID(int id){
+    public Order findOrderByID(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_ORDER_BY_ID);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setLong(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             if(rs.next()){
                 con.commit();
@@ -172,7 +172,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
     }
 
     @Override
-    public void setOrderStatus(int id){
+    public void setOrderStatus(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
@@ -181,7 +181,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             preparedStatement = con.prepareStatement(SET_ORDER_STATUS);
             boolean relevant = findOrderByID(id).isOrderStatus();
             preparedStatement.setBoolean(1,!relevant);
-            preparedStatement.setInt(2,id);
+            preparedStatement.setLong(2,id);
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -200,7 +200,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
     // need to test
     @Override
-    public boolean isOrderExist(int id){
+    public boolean isOrderExist(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
 
@@ -208,7 +208,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(IS_ORDER_EXIST);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setLong(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             return rs.next();
         } catch (SQLException e) {
@@ -231,14 +231,14 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         UserDAOImpl userDAO = DAOFactory.getInstance().getUserDAO();
         RouteDAOImpl routeDAO = DAOFactory.getInstance().getRouteDAO();
 
-        int id = rs.getInt(ID);
+        Long id = rs.getLong(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
         BigDecimal orderPrise = rs.getBigDecimal(ORDER_PRISE);
         int countOfPurchasedTickets = rs.getInt(COUNT_OF_PURCHASED_TICKETS);
         boolean orderStatus = rs.getBoolean(ORDER_STATUS);
-        int user_id = rs.getInt(USER_ID);
-        int route_id = rs.getInt(ROUTE_ID);
+        Long user_id = rs.getLong(USER_ID);
+        Long route_id = rs.getLong(ROUTE_ID);
         User selectedUser = userDAO.findUserByID(user_id);
         Route selectedRoute = routeDAO.findRouteByID(route_id);
         order.setID(id);

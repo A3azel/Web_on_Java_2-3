@@ -27,6 +27,8 @@ public class TrainDAOImpl extends AbstractDAO implements TrainDAO {
     private static final String FIND_TRAIN = "SELECT * FROM train_info WHERE train_number = ?";
     private static final String FIND_TRAIN_BY_ID = "SELECT * FROM train_info WHERE id = ?";
     private static final String FIND_ALL_TRAIN = "SELECT * FROM train_info";
+    private static final String DELETE_TRAIN_BY_ID = "DELETE FROM train_info WHERE id = ?";
+    private static final String DELETE_TRAIN_BY_TRAIN_NUMBER = "DELETE FROM train_info WHERE train_number = ?";
 
     private static TrainDAOImpl trainDAO;
 
@@ -86,7 +88,7 @@ public class TrainDAOImpl extends AbstractDAO implements TrainDAO {
             preparedStatement.setString(2,train.getTrainNumber());
             preparedStatement.setInt(3,train.getNumberOfSeats());
             preparedStatement.setBoolean(4, train.isRelevant());
-            preparedStatement.setInt(5,train.getID());
+            preparedStatement.setLong(5,train.getID());
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -162,14 +164,14 @@ public class TrainDAOImpl extends AbstractDAO implements TrainDAO {
     }
 
     @Override
-    public Train findTrainByID(int id){
+    public Train findTrainByID(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_TRAIN_BY_ID);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setLong(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             if(rs.next()){
                 con.commit();
@@ -217,9 +219,55 @@ public class TrainDAOImpl extends AbstractDAO implements TrainDAO {
         }
     }
 
+    public void deleteTrainByID(Long id){
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            preparedStatement = con.prepareStatement(DELETE_TRAIN_BY_ID);
+            preparedStatement.setLong(1,id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+    }
+
+    public void deleteTrainByTrainNumber(String trainNumber){
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            preparedStatement = con.prepareStatement(DELETE_TRAIN_BY_TRAIN_NUMBER);
+            preparedStatement.setString(1,trainNumber);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+    }
+
     public Train helpToBuildTrain(ResultSet rs) throws SQLException {
         Train train = new Train();
-        int id = rs.getInt(ID);
+        Long id = rs.getLong(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
         String trainNumber = rs.getString(TRAIN_NUMBER);

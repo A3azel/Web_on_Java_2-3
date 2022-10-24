@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public abstract class BasedEntity implements Serializable {
-    private int ID;
+    private Long ID;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -12,11 +12,11 @@ public abstract class BasedEntity implements Serializable {
 
     }
 
-    public int getID() {
+    public Long getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    public void setID(Long ID) {
         this.ID = ID;
     }
 

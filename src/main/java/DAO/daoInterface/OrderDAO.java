@@ -8,8 +8,8 @@ public interface OrderDAO {
     void addOrder(Order order);
     List<Order> findAllOrders();
     List<Order> findAllUsersOrders(String username);
-    Order findOrderByID(int id);
-    void setOrderStatus(int id);
-    boolean isOrderExist(int id);
+    Order findOrderByID(Long id);
+    void setOrderStatus(Long id);
+    boolean isOrderExist(Long id);
 
 }

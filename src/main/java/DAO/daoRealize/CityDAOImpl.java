@@ -23,6 +23,7 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
     private static final String UPDATE_CITY = "UPDATE cities SET update_time= ?, city_name = ?,relevant = ? WHERE id = ?";
     private static final String SET_CITY_RELEVANT = "UPDATE cities SET relevant = ? WHERE city_name = ?";
     private static final String FIND_CITY = "SELECT * FROM cities WHERE city_name = ?";
+    private static final String DELETE_CITY = "DELETE FROM cities WHERE city_name = ?";
     private static final String FIND_CITY_BY_ID = "SELECT * FROM cities WHERE id = ?";
     private static final String FIND_ALL_CITES = "SELECT * FROM cities";
 
@@ -81,7 +82,7 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
             preparedStatement.setTimestamp(1,timestamp);
             preparedStatement.setString(2,city.getCityName());
             preparedStatement.setBoolean(3, city.isRelevant());
-            preparedStatement.setInt(4,city.getID());
+            preparedStatement.setLong(4,city.getID());
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -157,14 +158,14 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
     }
 
     @Override
-    public City findCityByID(int id){
+    public City findCityByID(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_CITY_BY_ID);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setLong(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             if(rs.next()){
                 con.commit();
@@ -212,9 +213,33 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
         }
     }
 
+    @Override
+    public void deleteCityByCityName(String cityName){
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            preparedStatement = con.prepareStatement(DELETE_CITY);
+            preparedStatement.setString(1,cityName);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+    }
+
     public City helpToBuildCity(ResultSet rs) throws SQLException {
         City city = new City();
-        int id = rs.getInt(ID);
+        Long id = rs.getLong(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
         String cityName = rs.getString(CITY_NAME);

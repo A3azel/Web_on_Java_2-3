@@ -9,7 +9,7 @@ public interface StationDAO {
     void updateStation(Station station);
     List<Station> findAllStations();
     Station findStationByStationName(String stationName);
-    Station findStationByID(int id);
+    Station findStationByID(Long id);
     void setStationRelevant(String stationName);
 
 }

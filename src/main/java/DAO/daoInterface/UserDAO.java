@@ -9,7 +9,7 @@ public interface UserDAO {
     void addUser(User user);
     List<User> findAllUsers();
     User findUserByUsername(String username);
-    User findUserByID(int id);
+    User findUserByID(Long id);
     void setUserAccountVerified(String username);
     void topUpAccount(BigDecimal money, String username);
     void spendMoney(BigDecimal money,String username);

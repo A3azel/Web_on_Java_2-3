@@ -9,6 +9,7 @@ public interface CityDAO {
     void updateCity(City city);
     List<City> findAllCites();
     City findCityByCityName(String cityName);
-    City findCityByID(int id);
+    City findCityByID(Long id);
     void setCityRelevant(String cityName);
+    void deleteCityByCityName(String cityName);
 }

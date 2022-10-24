@@ -9,6 +9,7 @@ public interface TrainDAO {
     void updateTrain(Train train);
     List<Train> findAllTrains();
     Train findTrainByTrainNumber(String trainNumber);
-    Train findTrainByID(int id);
+    Train findTrainByID(Long id);
     void setTrainRelevant(String trainNumber);
+    void deleteTrainByID(Long id);
 }

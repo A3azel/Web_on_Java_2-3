@@ -47,6 +47,10 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(ADD_CITY);
+            if(findCityByCityName(city.getCityName())!=null){
+                System.out.println("city with selected name already exist");
+                return;
+            }
             Calendar calendar = Calendar.getInstance();
             java.sql.Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
             preparedStatement.setTimestamp(1,timestamp);
@@ -154,7 +158,8 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
             DAOHelperMethods.closeCon(preparedStatement);
             DAOHelperMethods.closeCon(con);
         }
-        return new City();
+        System.out.println("city not found");
+        return null;
     }
 
     @Override
@@ -183,7 +188,8 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
             DAOHelperMethods.closeCon(preparedStatement);
             DAOHelperMethods.closeCon(con);
         }
-        return new City();
+        System.out.println("city not found");
+        return null;
     }
 
     @Override
@@ -194,6 +200,10 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(SET_CITY_RELEVANT);
+            if(findCityByCityName(cityName)==null){
+                System.out.println("city with selected name not found");
+                return;
+            }
             boolean relevant = findCityByCityName(cityName).isRelevant();
             preparedStatement.setBoolean(1,!relevant);
             preparedStatement.setString(2,cityName);
@@ -219,6 +229,10 @@ public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
+            if(findCityByCityName(cityName)==null){
+                System.out.println("city with selected name not found");
+                return;
+            }
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(DELETE_CITY);
             preparedStatement.setString(1,cityName);

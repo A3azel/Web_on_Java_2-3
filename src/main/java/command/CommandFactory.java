@@ -30,6 +30,7 @@ public class CommandFactory {
     }
 
     public Command getCommand(String commandName) {
+        //System.out.println(commandName);
         if(!commands.containsKey(commandName) || commandName==null){
             throw new IllegalArgumentException("Command not found");
         }

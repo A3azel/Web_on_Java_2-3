@@ -135,6 +135,9 @@ public class CityDAOImpl extends AbstractDAO implements CityDAO {
 
     @Override
     public City findCityByCityName(String cityName){
+        if(cityName == null){
+            return null;
+        }
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {

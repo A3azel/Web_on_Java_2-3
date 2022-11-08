@@ -94,7 +94,8 @@
                     <button type="button" value="Дніпро-Львів" class="btn btn-outline-secondary">Дніпро <i class="bi bi-arrow-left-right"></i> Львів</button>
                 </div>
             </div>
-            <form action="controller?action=trainsBetweenCities" method="get">
+            <form action="controller" method="get">
+                <input type="hidden" name="action" value="trainsBetweenCities">
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <div class="input-group mb-3">
@@ -102,11 +103,11 @@
                             <input type="text" class="form-control" id="from" name="cityOfDeparture" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                         </div>
                     </div>
-                    <c:choose>
+                    <%--<c:choose>
                         <c:when test="${requestScope.departureCityError != null}">
                             <p style="color: red">${requestScope.departureCityError}</p>
                         </c:when>
-                    </c:choose>
+                    </c:choose>--%>
 
                     <div class="col-sm-6">
                         <div class="input-group mb-3">
@@ -114,17 +115,13 @@
                             <input type="text" class="form-control" id="where" name="cityOfArrival" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                         </div>
                     </div>
-                    <%--<c:choose>
+                    <c:choose>
                         <c:when test="${requestScope.arrivalCityError != null}">
                             <p style="color: red">${requestScope.arrivalCityError}</p>
                         </c:when>
-                    </c:choose>--%>
+                    </c:choose>
                 </div>
-                <c:choose>
-                    <c:when test="${requestScope.routeErrors != null}">
-                        <p style="color: red">${requestScope.routeErrors}</p>
-                    </c:when>
-                </c:choose>
+
                 <div class="row justify-content-md-center">
                     <div class="col col-lg-2">
                         <label for="startDate" style="padding-bottom:20px">Виберіть дату відправлення</label>
@@ -135,6 +132,11 @@
                         <input  id="startTime" name="selectedTime" class="form-control" type="time" />
                     </div>
                 </div>
+                <c:choose>
+                    <c:when test="${requestScope.routeErrors != null}">
+                        <p style="color: red">${requestScope.routeErrors}</p>
+                    </c:when>
+                </c:choose>
                 <div class="form-row text-center" style="padding-top: 20px">
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary btn-lg" >

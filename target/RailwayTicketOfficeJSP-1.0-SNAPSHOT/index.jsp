@@ -94,7 +94,8 @@
                     <button type="button" value="Дніпро-Львів" class="btn btn-outline-secondary">Дніпро <i class="bi bi-arrow-left-right"></i> Львів</button>
                 </div>
             </div>
-            <form action="controller?action=trainsBetweenCities" method="get">
+            <form action="controller" method="get">
+                <input type="hidden" name="action" value="trainsBetweenCities">
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <div class="input-group mb-3">

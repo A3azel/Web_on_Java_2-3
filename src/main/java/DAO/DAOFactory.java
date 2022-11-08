@@ -2,7 +2,8 @@ package DAO;
 
 import DAO.daoRealize.*;
 
-public class DAOFactory {
+
+public class DAOFactory{
 
     private static DAOFactory factory;
 

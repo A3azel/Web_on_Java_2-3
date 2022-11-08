@@ -1,8 +1,6 @@
-package DAO.daoRealize;
+package DAO;
 
-import DAO.AbstractDAO;
-import DAO.DAOFactory;
-import DAO.daoInterface.UserDAO;
+import DAO.daoRealize.RoleDAOImpl;
 import entity.User;
 import helpDAO.DAOHelperMethods;
 

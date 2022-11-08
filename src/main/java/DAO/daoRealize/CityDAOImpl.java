@@ -1,6 +1,7 @@
 package DAO.daoRealize;
 
 import DAO.AbstractDAO;
+import DAO.daoInterface.CityDAO;
 import entity.City;
 import helpDAO.DAOHelperMethods;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class CityDAOImpl extends AbstractDAO implements DAO.daoInterface.CityDAO {
+public class CityDAOImpl extends AbstractDAO implements CityDAO {
     // table filed
     private static final String ID = "id";
     private static final String CREATE_TIME = "create_time";

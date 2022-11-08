@@ -1,5 +1,8 @@
 package command;
 
+import command.customeCommand.LoginCommand;
+import command.customeCommand.MainCommand;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +10,7 @@ public class CommandFactory {
 
     private static CommandFactory factory;
 
-    private Map<String, Controller> commands = new HashMap<String, Controller>();
+    private Map<String, Command> commands = new HashMap<>();
 
     private CommandFactory(){
 
@@ -22,7 +25,8 @@ public class CommandFactory {
 
 
     {
-
+        commands.put("login",new LoginCommand());
+        commands.put("trainsBetweenCities",new MainCommand());
     }
 
     public Command getCommand(String commandName) {

@@ -8,6 +8,8 @@ import java.util.Objects;
 
 public class Route extends BasedEntity implements Serializable {
 
+    private String departureCity;
+    private String arrivalCity;
     private String startStation;
     private LocalDateTime departureTime;
     private LocalTime travelTime;
@@ -17,6 +19,22 @@ public class Route extends BasedEntity implements Serializable {
     private BigDecimal priseOfTicket;
     private String train;
     private boolean relevant;
+
+    public String getDepartureCity() {
+        return departureCity;
+    }
+
+    public void setDepartureCity(String departureCity) {
+        this.departureCity = departureCity;
+    }
+
+    public String getArrivalCity() {
+        return arrivalCity;
+    }
+
+    public void setArrivalCity(String arrivalCity) {
+        this.arrivalCity = arrivalCity;
+    }
 
     public boolean isRelevant() {
         return relevant;
@@ -95,12 +113,12 @@ public class Route extends BasedEntity implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Route)) return false;
         Route route = (Route) o;
-        return numberOfFreeSeats == route.numberOfFreeSeats && relevant == route.relevant && Objects.equals(startStation, route.startStation) && Objects.equals(departureTime, route.departureTime) && Objects.equals(travelTime, route.travelTime) && Objects.equals(arrivalStation, route.arrivalStation) && Objects.equals(arrivalTime, route.arrivalTime) && Objects.equals(priseOfTicket, route.priseOfTicket) && Objects.equals(train, route.train);
+        return numberOfFreeSeats == route.numberOfFreeSeats && relevant == route.relevant && Objects.equals(departureCity, route.departureCity) && Objects.equals(arrivalCity, route.arrivalCity) && Objects.equals(startStation, route.startStation) && Objects.equals(departureTime, route.departureTime) && Objects.equals(travelTime, route.travelTime) && Objects.equals(arrivalStation, route.arrivalStation) && Objects.equals(arrivalTime, route.arrivalTime) && Objects.equals(priseOfTicket, route.priseOfTicket) && Objects.equals(train, route.train);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startStation, departureTime, travelTime, arrivalStation, arrivalTime, numberOfFreeSeats, priseOfTicket, train, relevant);
+        return Objects.hash(departureCity, arrivalCity, startStation, departureTime, travelTime, arrivalStation, arrivalTime, numberOfFreeSeats, priseOfTicket, train, relevant);
     }
 
     @Override

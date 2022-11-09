@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 <head>
@@ -23,7 +24,7 @@
         <div class="text-center mt-4 name">
             RailWay Ticket Office
         </div>
-        <form class="p-3 mt-3" action="controller" method="get">
+        <form class="p-3 mt-3" action="controller" method="post">
             <input type="hidden" name="action" value="login">
             <div class="form-field d-flex align-items-center">
                 <span class="far fa-user"></span>
@@ -41,7 +42,7 @@
             <button class="btn mt-3" type="submit">Login</button>
         </form>
         <div class="text-center fs-6">
-            <a href="#">Forget password?</a> or <a href="#">Sing up</a>
+            <a href="#">Sing up</a>
         </div>
     </main>
 </div>

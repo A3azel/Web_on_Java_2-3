@@ -16,7 +16,8 @@ public class LoginCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getSession().getAttribute("username") != null) {
-            response.sendRedirect("office");
+            response.sendRedirect("controller?action=user");
+            return;
         }
 
         String username = request.getParameter("username");
@@ -42,7 +43,8 @@ public class LoginCommand implements Command {
         }
 
         request.getSession().setAttribute("username", username);
-        response.sendRedirect("office");
+
+        response.sendRedirect("controller?action=user");
     }
 
     public void passToErrorPage(HttpServletRequest request, HttpServletResponse response, Map<String,String> errorMap){

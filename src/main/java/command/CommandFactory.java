@@ -2,6 +2,8 @@ package command;
 
 import command.customeCommand.LoginCommand;
 import command.customeCommand.MainCommand;
+import command.customeCommand.OfficeCommand;
+import command.customeCommand.OrderCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +29,8 @@ public class CommandFactory {
     {
         commands.put("login",new LoginCommand());
         commands.put("trainsBetweenCities",new MainCommand());
+        commands.put("user",new OfficeCommand());
+        commands.put("order",new OrderCommand());
     }
 
     public Command getCommand(String commandName) {

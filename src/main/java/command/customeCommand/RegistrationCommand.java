@@ -1,4 +1,4 @@
 package command.customeCommand;
 
-public class Office {
+public class RegistrationCommand {
 }

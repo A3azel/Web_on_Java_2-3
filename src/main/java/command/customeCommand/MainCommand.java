@@ -71,7 +71,7 @@ public class MainCommand implements Command {
         }
 
         request.setAttribute("routeList",routeList);
-        request.getRequestDispatcher("selectedRouts").forward(request,response);
+        request.getRequestDispatcher("selectedRouts.jsp").forward(request,response);
 
 
     }

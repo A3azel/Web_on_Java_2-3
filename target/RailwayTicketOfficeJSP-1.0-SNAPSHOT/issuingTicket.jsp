@@ -7,6 +7,8 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%--<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>--%>
+<%@taglib uri="http://example.com/functions" prefix="f" %>
 <html>
 <head>
     <title>Title</title>
@@ -78,22 +80,13 @@
                         <hr>
                         <div class="row">
                             <div class="col-sm-4">
-                                <p class="mb-0">Час в дорозі</p>
-                            </div>
-                            <div class="col-sm-8">
-                                <p class="text-muted mb-0">
-                                    ${requestScope.selectedRoute.departureTime}
-                                </p>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-4">
                                 <p class="mb-0">Час відправлення</p>
                             </div>
                             <div class="col-sm-8">
                                 <p class="text-muted mb-0">
-                                    ${requestScope.selectedRoute.arrivalTime}
+                                    <%--<fmt:formatDate value="${requestScope.selectedRoute.departureTime}" pattern="yyyy-MM-dd HH:mm:ss" />--%>
+                                        ${f:formatLocalDateTime(requestScope.selectedRoute.departureTime, 'yyyy-MM-dd HH:mm:ss')}
+
                                 </p>
                             </div>
                         </div>
@@ -101,6 +94,17 @@
                         <div class="row">
                             <div class="col-sm-4">
                                 <p class="mb-0">Час прибуття</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="text-muted mb-0">
+                                    ${f:formatLocalDateTime(requestScope.selectedRoute.arrivalTime, 'yyyy-MM-dd HH:mm:ss')}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p class="mb-0">Час в дорозі</p>
                             </div>
                             <div class="col-sm-8">
                                 <p class="text-muted mb-0">
@@ -143,11 +147,15 @@
                             <input type="number" class="form-control" id="countOfTickets" name="cityOfDeparture" min="0"/>
                             <button type="button" id="plusCount" class="input-group-text" >+</button>
                         </div>
-                        <label>Сума: </label>
+
                         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                             <button type="submit" class="btn btn-outline-success">Придбати</button>
                         </div>
                     </form>
+                </div>
+                <div class="row">
+                    <label>Сума: </label>
+                    <p id="prise"></p>
                 </div>
             </div>
         </div>
@@ -161,5 +169,33 @@
 
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script th:inline="javascript">
+    $('#plusCount').click(plus);
+    $('#minusCount').click(minus);
+    let count = $('#countOfTickets');
+    let res = document.querySelector("#prise");
+    count.val(0);
+
+    let numberOfFreeSeats =  '${countOfFreeTickets}';
+    let ticketPrice = '${ticketPrise}'
+
+    function plus() {
+        if(Number(count.val()) < numberOfFreeSeats){
+            count.val(Number($(count).val())+1);
+            console.log(Number(count.val())*ticketPrice);
+            /*prise.innerHTML = Number(count.val())*ticketPrice;*/
+           res.textContent = Number(count.val())*ticketPrice + " ₴";
+        }
+    }
+
+    function minus() {
+        if(count.val() > 0){
+            count.val(Number($(count).val())-1);
+            res.textContent = Number(count.val())*ticketPrice + " ₴";
+        }
+    }
+
+
+</script>
 </body>
 </html>

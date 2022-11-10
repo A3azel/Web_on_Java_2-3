@@ -8,6 +8,7 @@ import java.util.List;
 public interface UserDAO {
     void addUser(User user);
     List<User> findAllUsers();
+    boolean isEmailExist(String email);
     User findUserByUsername(String username);
     User findUserByID(Long id);
     void setUserAccountVerified(String username);

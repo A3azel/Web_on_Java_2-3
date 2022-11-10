@@ -5,6 +5,9 @@ import DAO.daoRealize.CityDAOImpl;
 import DAO.daoRealize.RouteDAOImpl;
 import command.Command;
 import entity.Route;
+import service.ServiceFactory;
+import service.serviceInterfaces.CityService;
+import service.serviceInterfaces.RouteService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,8 +34,11 @@ public class MainCommand implements Command {
 
         Map<String,String> errorAttribute = new HashMap<>();
 
-        RouteDAOImpl routeDAO = DAOFactory.getInstance().getRouteDAO();
-        CityDAOImpl cityDAO = DAOFactory.getInstance().getCityDAO();
+        //RouteDAOImpl routeDAO = DAOFactory.getInstance().getRouteDAO();
+        //CityDAOImpl cityDAO = DAOFactory.getInstance().getCityDAO();
+
+        CityService cityService = ServiceFactory.getInstance().getCityService();
+        RouteService routeService = ServiceFactory.getInstance().getRouteService();
 
         LocalDateTime selectedLocalDateTime = LocalDateTime.of(departureData,departureTime);
 
@@ -50,10 +56,10 @@ public class MainCommand implements Command {
         if(selectedLocalDateTime.isBefore(LocalDateTime.now())){
             errorAttribute.put("routeErrors","the date has already passed");
         }
-        if(cityDAO.findCityByCityName(departureCity) == null){
+        if(cityService.findCityByCityName(departureCity) == null){
             errorAttribute.put("departureCityError","City with the specified name not found");
         }
-        if(cityDAO.findCityByCityName(arrivalCity) == null){
+        if(cityService.findCityByCityName(arrivalCity) == null){
             errorAttribute.put("arrivalCityError","City with the specified name not found");
         }
 
@@ -61,7 +67,7 @@ public class MainCommand implements Command {
             passToErrorPage(request,response,errorAttribute);
             return;
         }
-        List<Route> routeList = routeDAO.findAllBetweenTwoCites(departureCity,arrivalCity,departureData,departureTime);
+        List<Route> routeList = routeService.findAllBetweenTwoCites(departureCity,arrivalCity,departureData,departureTime);
         if(routeList.size()==0){
             errorAttribute.put("routeErrors","Route not found");
         }

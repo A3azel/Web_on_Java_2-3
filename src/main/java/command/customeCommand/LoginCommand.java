@@ -1,8 +1,8 @@
 package command.customeCommand;
 
-import DAO.DAOFactory;
-import DAO.UserDAOImpl;
 import command.Command;
+import service.ServiceFactory;
+import service.serviceInterfaces.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,13 +19,12 @@ public class LoginCommand implements Command {
             response.sendRedirect("controller?action=user");
             return;
         }
-
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        UserDAOImpl userDAO = DAOFactory.getInstance().getUserDAO();
+        UserService userService = ServiceFactory.getInstance().getUserService();
 
-        boolean isUserExist = userDAO.isUserExist(username,password);
+        boolean isUserExist = userService.isUserExist(username,password);
 
         Map<String,String> errorAttribute = new HashMap<>();
 
@@ -34,7 +33,7 @@ public class LoginCommand implements Command {
             passToErrorPage(request,response,errorAttribute);
             return;
         }
-        boolean isAccountVerified = userDAO.findUserByUsername(username).isAccountVerified();
+        boolean isAccountVerified = userService.findUserByUsername(username).isAccountVerified();
 
         if (!isAccountVerified){
             errorAttribute.put("loginError","account wab blocked");

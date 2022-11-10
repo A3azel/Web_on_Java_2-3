@@ -1,9 +1,6 @@
 package command;
 
-import command.customeCommand.LoginCommand;
-import command.customeCommand.MainCommand;
-import command.customeCommand.OfficeCommand;
-import command.customeCommand.OrderCommand;
+import command.customeCommand.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +28,10 @@ public class CommandFactory {
         commands.put("trainsBetweenCities",new MainCommand());
         commands.put("user",new OfficeCommand());
         commands.put("order",new OrderCommand());
+        commands.put("registration",new RegistrationCommand());
     }
 
     public Command getCommand(String commandName) {
-        //System.out.println(commandName);
         if(!commands.containsKey(commandName) || commandName==null){
             throw new IllegalArgumentException("Command not found");
         }

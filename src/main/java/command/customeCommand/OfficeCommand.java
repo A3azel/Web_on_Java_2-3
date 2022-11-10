@@ -4,6 +4,8 @@ import DAO.DAOFactory;
 import DAO.UserDAOImpl;
 import command.Command;
 import entity.User;
+import service.ServiceFactory;
+import service.serviceInterfaces.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +23,10 @@ public class OfficeCommand implements Command {
         }
 
         if(request.getSession().getAttribute("user") == null){
-            UserDAOImpl userDAO = DAOFactory.getInstance().getUserDAO();
+            //UserDAOImpl userDAO = DAOFactory.getInstance().getUserDAO();
+            UserService userService = ServiceFactory.getInstance().getUserService();
 
-            User user = userDAO.findUserByUsername(username);
+            User user = userService.findUserByUsername(username);
             request.getSession().setAttribute("user",user);
         }
 

@@ -42,7 +42,7 @@
             <button class="btn mt-3" type="submit">Login</button>
         </form>
         <div class="text-center fs-6">
-            <a href="#">Sing up</a>
+            <a href="registration.jsp">Sing up</a>
         </div>
     </main>
 </div>

@@ -4,6 +4,8 @@ import DAO.DAOFactory;
 import DAO.daoRealize.RouteDAOImpl;
 import command.Command;
 import entity.Route;
+import service.ServiceFactory;
+import service.serviceInterfaces.RouteService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,11 +18,15 @@ public class OrderCommand implements Command {
 
         Long routeID = Long.valueOf(request.getParameter("id"));
 
-        RouteDAOImpl routeDAO = DAOFactory.getInstance().getRouteDAO();
+        //RouteDAOImpl routeDAO = DAOFactory.getInstance().getRouteDAO();
 
-        Route selectedRoute = routeDAO.findRouteByID(routeID);
+        RouteService routeService = ServiceFactory.getInstance().getRouteService();
+
+        Route selectedRoute = routeService.findRouteByID(routeID);
 
         request.setAttribute("selectedRoute",selectedRoute);
+        request.setAttribute("countOfFreeTickets",selectedRoute.getNumberOfFreeSeats());
+        request.setAttribute("ticketPrise",selectedRoute.getPriseOfTicket());
 
         request.getRequestDispatcher("issuingTicket.jsp").forward(request,response);
     }

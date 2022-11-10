@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib uri="http://example.com/functions" prefix="f" %>
 <html>
 <head>
     <title>Title</title>
@@ -71,7 +72,10 @@
                             ${route.startStation}/${route.arrivalStation}
                     </td>
                     <td>
-                        ${route.departureTime} ${route.arrivalTime}
+                       <%-- <fmt:formatDate value="${route.departureTime}" pattern="yyyy-MM-dd HH:mm:ss" /> <br>
+                        <fmt:formatDate value="${route.arrivalTime}" pattern="yyyy-MM-dd HH:mm:ss" />--%>
+                               ${f:formatLocalDateTime(route.departureTime, 'yyyy-MM-dd HH:mm:ss')}
+                               ${f:formatLocalDateTime(route.arrivalTime, 'yyyy-MM-dd HH:mm:ss')}
                     </td>
 
                     <td>

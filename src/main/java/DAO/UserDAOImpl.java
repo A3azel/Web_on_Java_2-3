@@ -31,6 +31,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     private static final String SET_USER_ACCOUNT_VERIFIED = "UPDATE user_info SET account_verified = ? WHERE username = ?";
     private static final String FIND_USER = "SELECT * FROM user_info WHERE username = ?";
     private static final String FIND_USER_BY_ID = "SELECT * FROM user_info WHERE id = ?";
+    private static final String FIND_USER_BY_EMAIL = "SELECT * FROM user_info WHERE user_email = ?";
     private static final String FIND_ALL_USERS = "SELECT * FROM user_info";
     private static final String TOP_UP_ACCOUNT = "UPDATE user_info SET user_count_of_money = user_count_of_money + ? WHERE id = ?";
     private static final String SPEND_MONEY = "UPDATE user_info SET user_count_of_money = user_count_of_money - ? WHERE id = ?";
@@ -120,6 +121,32 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
+    public boolean isEmailExist(String email) {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            preparedStatement = con.prepareStatement(FIND_USER);
+            preparedStatement.setString(1,email);
+            ResultSet rs = preparedStatement.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+        return false;
+    }
+
+    @Override
     public User findUserByUsername(String username){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -145,7 +172,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             DAOHelperMethods.closeCon(preparedStatement);
             DAOHelperMethods.closeCon(con);
         }
-        return new User();
+        return null;
     }
 
     @Override
@@ -174,7 +201,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             DAOHelperMethods.closeCon(preparedStatement);
             DAOHelperMethods.closeCon(con);
         }
-        return new User();
+        return null;
     }
 
     @Override

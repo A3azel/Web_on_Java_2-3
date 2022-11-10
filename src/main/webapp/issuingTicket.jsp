@@ -85,7 +85,7 @@
                             <div class="col-sm-8">
                                 <p class="text-muted mb-0">
                                     <%--<fmt:formatDate value="${requestScope.selectedRoute.departureTime}" pattern="yyyy-MM-dd HH:mm:ss" />--%>
-                                        ${f:formatLocalDateTime(requestScope.selectedRoute.departureTime, 'yyyy-MM-dd HH:mm:ss')}
+                                        <%--${f:formatLocalDateTime(requestScope.selectedRoute.departureTime, 'yyyy-MM-dd HH:mm:ss')}--%>
 
                                 </p>
                             </div>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-sm-8">
                                 <p class="text-muted mb-0">
-                                    ${f:formatLocalDateTime(requestScope.selectedRoute.arrivalTime, 'yyyy-MM-dd HH:mm:ss')}
+                                    <%--${f:formatLocalDateTime(requestScope.selectedRoute.arrivalTime, 'yyyy-MM-dd HH:mm:ss')}--%>
                                 </p>
                             </div>
                         </div>
@@ -139,15 +139,21 @@
             </div>
             <div class="col-lg-6">
                 <div class="row">
-                    <form action="#" method="post">
+                    <form action="controller" method="post">
+                        <input type="hidden" name="action" value="makeOrder">
+                        <input type="hidden" name="ticketPrise" value="${requestScope.selectedRoute.priseOfTicket}">
+                        <input type="hidden" name="routeID" value="${requestScope.selectedRoute.ID}">
                         <div class="input-group" style="width: 150px">
-                            <!--readonly js-->
                             <label for="countOfTickets">Кількість квитків</label>
                             <button type="button" id="minusCount" class="input-group-text">-</button>
-                            <input type="number" class="form-control" id="countOfTickets" name="cityOfDeparture" min="0"/>
+                            <input type="number" class="form-control" id="countOfTickets" name="countOfTickets" min="0"/>
                             <button type="button" id="plusCount" class="input-group-text" >+</button>
                         </div>
-
+                        <c:choose>
+                            <c:when test="${requestScope.insufficientFunds != null}">
+                                <p style="color: red">${requestScope.insufficientFunds }</p>
+                            </c:when>
+                        </c:choose>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                             <button type="submit" class="btn btn-outline-success">Придбати</button>
                         </div>

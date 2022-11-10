@@ -1,5 +1,6 @@
 package service.serviceInterfaces;
 
+import customExceptions.userExeptions.InvalidCountOfMoney;
 import entity.User;
 
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ public interface UserService {
     User findUserByID(Long id);
     boolean isEmailExist(String email);
     void setUserAccountVerified(String username);
-    void topUpAccount(BigDecimal money, String username);
+    void topUpAccount(String money, String username) throws InvalidCountOfMoney;
     void spendMoney(BigDecimal money,String username);
     boolean isUserExist(String username,String password);
 }

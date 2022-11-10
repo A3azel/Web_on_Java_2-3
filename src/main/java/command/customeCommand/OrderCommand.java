@@ -18,8 +18,6 @@ public class OrderCommand implements Command {
 
         Long routeID = Long.valueOf(request.getParameter("id"));
 
-        //RouteDAOImpl routeDAO = DAOFactory.getInstance().getRouteDAO();
-
         RouteService routeService = ServiceFactory.getInstance().getRouteService();
 
         Route selectedRoute = routeService.findRouteByID(routeID);

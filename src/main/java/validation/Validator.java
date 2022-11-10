@@ -5,11 +5,12 @@ import service.serviceInterfaces.UserService;
 
 import java.util.regex.Pattern;
 
-public class RegistrationValidator {
+public class Validator {
 
     private static final String FIRST_NAME_AND_LAST_NAME_REGEX = "^[A-Za-zА-Яа-яЁёІіЇїЄє]{1,40}$";
     private static final String USERNAME_REGEX = "\\w{4,64}";
     private static final String EMAIL_REGEX = "^([A-Za-z0-9_-]+\\.)*[A-Za-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
+    private static final String MONEY_REGEX = "\\d{1,6}[.,]\\d{0,2}";
 
     public static boolean isUserExist(String username){
         UserService userService = ServiceFactory.getInstance().getUserService();
@@ -39,6 +40,10 @@ public class RegistrationValidator {
 
     public static boolean isTheSamePasswords(String firstPassword, String secondPassword){
         return firstPassword.equals(secondPassword);
+    }
+
+    public static boolean isCountOfMoneyValid(String money){
+        return Pattern.matches(MONEY_REGEX,money.trim());
     }
 
 }

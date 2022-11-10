@@ -9,7 +9,7 @@ public class CommandFactory {
 
     private static CommandFactory factory;
 
-    private Map<String, Command> commands = new HashMap<>();
+    private final Map<String, Command> commands = new HashMap<>();
 
     private CommandFactory(){
 
@@ -28,7 +28,10 @@ public class CommandFactory {
         commands.put("trainsBetweenCities",new MainCommand());
         commands.put("user",new OfficeCommand());
         commands.put("order",new OrderCommand());
+        commands.put("makeOrder",new MakeOrderCommand());
         commands.put("registration",new RegistrationCommand());
+        commands.put("logout",new LogoutCommand());
+        commands.put("topUpAccount",new TopUpAccountCommand());
     }
 
     public Command getCommand(String commandName) {

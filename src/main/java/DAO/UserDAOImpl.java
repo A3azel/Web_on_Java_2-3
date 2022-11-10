@@ -33,8 +33,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     private static final String FIND_USER_BY_ID = "SELECT * FROM user_info WHERE id = ?";
     private static final String FIND_USER_BY_EMAIL = "SELECT * FROM user_info WHERE user_email = ?";
     private static final String FIND_ALL_USERS = "SELECT * FROM user_info";
-    private static final String TOP_UP_ACCOUNT = "UPDATE user_info SET user_count_of_money = user_count_of_money + ? WHERE id = ?";
-    private static final String SPEND_MONEY = "UPDATE user_info SET user_count_of_money = user_count_of_money - ? WHERE id = ?";
+    private static final String TOP_UP_ACCOUNT = "UPDATE user_info SET user_count_of_money = user_count_of_money + ? WHERE username = ?";
+    private static final String SPEND_MONEY = "UPDATE user_info SET user_count_of_money = user_count_of_money - ? WHERE username = ?";
     private static final String IS_USER_EXIST = "SELECT * FROM user_info WHERE username = ? AND user_password = ?";
 
     private static UserDAOImpl userDAO;

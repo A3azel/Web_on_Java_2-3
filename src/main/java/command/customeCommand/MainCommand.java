@@ -91,6 +91,5 @@ public class MainCommand implements Command {
         } catch (IOException | ServletException e) {
             e.printStackTrace();
         }
-
     }
 }

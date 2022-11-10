@@ -2,9 +2,10 @@ package service.serviceImplementation;
 
 import DAO.DAOFactory;
 import DAO.UserDAOImpl;
+import customExceptions.userExeptions.InvalidCountOfMoney;
 import entity.User;
 import service.serviceInterfaces.UserService;
-import validation.RegistrationValidator;
+import validation.Validator;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -36,27 +37,27 @@ public class UserServiceI implements UserService {
 
         HashMap<String,String> validationErrors = new HashMap<>();
 
-        if(!RegistrationValidator.isFirstNameOrLastNameValid(firstName)){
+        if(!Validator.isFirstNameOrLastNameValid(firstName)){
             validationErrors.put("firstNameError","First name is invalid");
         }
-        if(!RegistrationValidator.isFirstNameOrLastNameValid(lastName)){
+        if(!Validator.isFirstNameOrLastNameValid(lastName)){
             validationErrors.put("lastNameError","Last name is invalid");
         }
-        if(!RegistrationValidator.isUsernameValid(username)){
+        if(!Validator.isUsernameValid(username)){
             System.out.println(username);
             validationErrors.put("usernameError","Username is invalid");
         }
-        if(!RegistrationValidator.isEmailValid(email)){
+        if(!Validator.isEmailValid(email)){
             System.out.println(email);
             validationErrors.put("emailError","Email is invalid");
         }
-        if(!RegistrationValidator.isPasswordValid(password)){
+        if(!Validator.isPasswordValid(password)){
             validationErrors.put("firstPasswordError","Length must be from 8 to 64 characters");
         }
-        if(!RegistrationValidator.isPasswordValid(submitPassword)){
+        if(!Validator.isPasswordValid(submitPassword)){
             validationErrors.put("secondPasswordError","Length must be from 8 to 64 characters");
         }
-        if(!RegistrationValidator.isTheSamePasswords(password, submitPassword)){
+        if(!Validator.isTheSamePasswords(password, submitPassword)){
             validationErrors.put("passwordsError","Different passwords");
         }
 
@@ -64,10 +65,10 @@ public class UserServiceI implements UserService {
             return validationErrors;
         }
 
-        if(!RegistrationValidator.isUserExist(username)){
+        if(!Validator.isUserExist(username)){
             validationErrors.put("userAlreadyExist","An account with the selected name already exists");
         }
-        if(!RegistrationValidator.isEmailExist(email)){
+        if(!Validator.isEmailExist(email)){
             validationErrors.put("emailAlreadyExist","An account with the selected email already exists");
         }
 
@@ -106,9 +107,12 @@ public class UserServiceI implements UserService {
     }
 
     @Override
-    public void topUpAccount(BigDecimal money, String username) {
-        userDAO.topUpAccount(money, username);
-
+    public void topUpAccount(String money, String username) throws InvalidCountOfMoney {
+        if(!Validator.isCountOfMoneyValid(money)){
+            //throw new InvalidCountOfMoney("Приклад вводу: 100000.00");
+        }
+        BigDecimal countOfMoney = BigDecimal.valueOf(Double.parseDouble(money));
+        userDAO.topUpAccount(countOfMoney, username);
     }
 
     @Override

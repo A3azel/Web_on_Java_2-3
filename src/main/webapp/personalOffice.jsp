@@ -39,10 +39,12 @@
                            ${sessionScope.user.username}
                         </p>
                         <div class="d-flex justify-content-center mb-3">
-                            <form method="get" action="#">
+                            <form method="get" action="controller">
+                                <input type="hidden" name="action" value="userPurchasedTickets">
                                 <button type="submit" class="btn btn-primary">Придбані білети</button>
                             </form>
-                            <form method="post" action="#">
+                            <form method="post" action="controller">
+                                <input type="hidden" name="action" value="logout">
                                 <button type="submit" class="btn btn-outline-primary ms-1">
                                     <i class="bi bi-door-open-fill"></i>
                                     Вийти
@@ -100,17 +102,18 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                    <button type="submit" id="topUpTheAccount"  class="btn btn-outline-secondary">Поповнити рахунок</button>
-                </div>
                 <c:choose>
-                    <c:when test="${sessionScope.user.userRole.equals('ADMIN')}">
+                    <c:when test="${sessionScope.user.userRole.equals('USER')}">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <button type="submit" id="topUpTheAccount"  class="btn btn-outline-secondary">Поповнити рахунок</button>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
                         <form action="#" method="post">
                             <button name="userIDPost" >Список користувачів</button>
                             <button name="upgradeUser">Список потягів</button>
                         </form>
-                    </c:when>
+                    </c:otherwise>
                 </c:choose>
                 <div id="placeToAdd" class="changedMenu">
                     <form method="post" action="controller">

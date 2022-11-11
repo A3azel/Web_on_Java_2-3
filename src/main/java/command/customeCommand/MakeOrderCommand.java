@@ -17,6 +17,10 @@ import java.util.Map;
 public class MakeOrderCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getSession().getAttribute("username") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
         UserService userService = ServiceFactory.getInstance().getUserService();
         int countOfTickets = Integer.parseInt(request.getParameter("countOfTickets"));
         BigDecimal ticketPrise = BigDecimal.valueOf(Double.parseDouble(request.getParameter("ticketPrise")));

@@ -32,6 +32,7 @@ public class CommandFactory {
         commands.put("registration",new RegistrationCommand());
         commands.put("logout",new LogoutCommand());
         commands.put("topUpAccount",new TopUpAccountCommand());
+        commands.put("userPurchasedTickets",new UserPurchasedTicketsCommand());
     }
 
     public Command getCommand(String commandName) {

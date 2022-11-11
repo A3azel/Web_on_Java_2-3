@@ -139,15 +139,21 @@
             </div>
             <div class="col-lg-6">
                 <div class="row">
-                    <form action="#" method="post">
+                    <form action="controller" method="post">
+                        <input type="hidden" name="action" value="makeOrder">
+                        <input type="hidden" name="ticketPrise" value="${requestScope.selectedRoute.priseOfTicket}">
+                        <input type="hidden" name="routeID" value="${requestScope.selectedRoute.ID}">
                         <div class="input-group" style="width: 150px">
-                            <!--readonly js-->
                             <label for="countOfTickets">Кількість квитків</label>
                             <button type="button" id="minusCount" class="input-group-text">-</button>
-                            <input type="number" class="form-control" id="countOfTickets" name="cityOfDeparture" min="0"/>
+                            <input type="number" class="form-control" id="countOfTickets" name="countOfTickets" min="0"/>
                             <button type="button" id="plusCount" class="input-group-text" >+</button>
                         </div>
-
+                        <c:choose>
+                            <c:when test="${requestScope.insufficientFunds != null}">
+                                <p style="color: red">${requestScope.insufficientFunds }</p>
+                            </c:when>
+                        </c:choose>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                             <button type="submit" class="btn btn-outline-success">Придбати</button>
                         </div>
@@ -155,7 +161,7 @@
                 </div>
                 <div class="row">
                     <label>Сума: </label>
-                    <p id="prise"></p>
+                    <p id="prise">0 ₴</p>
                 </div>
             </div>
         </div>

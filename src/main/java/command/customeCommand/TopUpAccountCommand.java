@@ -15,6 +15,10 @@ public class TopUpAccountCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getSession().getAttribute("username") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
         String money = request.getParameter("countOfMoney");
         User user = (User) request.getSession().getAttribute("user");
 

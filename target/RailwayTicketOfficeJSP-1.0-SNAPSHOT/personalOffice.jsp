@@ -13,7 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="CSS/personalOffice.css" type="text/css">
+    <link href="CSS/personalOffice.css" rel="stylesheet" type="text/css">
     <link href="CSS/footer.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -39,10 +39,12 @@
                            ${sessionScope.user.username}
                         </p>
                         <div class="d-flex justify-content-center mb-3">
-                            <form method="get" action="#">
+                            <form method="get" action="controller">
+                                <input type="hidden" name="action" value="userPurchasedTickets">
                                 <button type="submit" class="btn btn-primary">Придбані білети</button>
                             </form>
-                            <form method="post" action="#">
+                            <form method="post" action="controller">
+                                <input type="hidden" name="action" value="logout">
                                 <button type="submit" class="btn btn-outline-primary ms-1">
                                     <i class="bi bi-door-open-fill"></i>
                                     Вийти
@@ -100,22 +102,29 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                    <button type="submit" id="topUpTheAccount"  class="btn btn-outline-secondary">Поповнити рахунок</button>
-                </div>
                 <c:choose>
-                    <c:when test="${sessionScope.user.userRole.equals('ADMIN')}">
+                    <c:when test="${sessionScope.user.userRole.equals('USER')}">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <button type="submit" id="topUpTheAccount"  class="btn btn-outline-secondary">Поповнити рахунок</button>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
                         <form action="#" method="post">
                             <button name="userIDPost" >Список користувачів</button>
                             <button name="upgradeUser">Список потягів</button>
                         </form>
-                    </c:when>
+                    </c:otherwise>
                 </c:choose>
                 <div id="placeToAdd" class="changedMenu">
-                    <form method="post" action="#">
+                    <form method="post" action="controller">
+                        <input type="hidden" name="action" value="topUpAccount">
                         <div class="d-grid gap-2 d-md-flex justify-content-md-start" style="padding-top: 20px">
                             <input type="number" min="1" class="form-control" name="countOfMoney" style="border-radius:20px;height:40px;width:200px">
+                            <c:choose>
+                                <c:when test="${requestScope.moneyError != null}">
+                                    <p style="color: red">${requestScope.moneyError}</p>
+                                </c:when>
+                            </c:choose>
                             <button type="submit" class="btn btn-outline-success"><i class="bi bi-cash-coin"></i>Поповнити</button>
                         </div>
                     </form>

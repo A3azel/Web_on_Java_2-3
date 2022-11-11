@@ -12,8 +12,9 @@ public class LogoutCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        if(request.getSession().getAttribute("user")==null){
+        if(request.getSession().getAttribute("user")!=null){
             session.removeAttribute("user");
+            session.removeAttribute("username");
             session.invalidate();
             response.sendRedirect("index.jsp");
         }

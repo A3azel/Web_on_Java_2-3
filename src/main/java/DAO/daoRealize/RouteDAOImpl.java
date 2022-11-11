@@ -2,7 +2,10 @@ package DAO.daoRealize;
 
 import DAO.AbstractDAO;
 import DAO.DAOFactory;
+import DAO.daoInterface.CityDAO;
 import DAO.daoInterface.RouteDAO;
+import DAO.daoInterface.StationDAO;
+import DAO.daoInterface.TrainDAO;
 import entity.Route;
 import helpDAO.DAOHelperMethods;
 
@@ -21,6 +24,8 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     private static final String ID = "id";
     private static final String CREATE_TIME = "create_time";
     private static final String UPDATE_TIME = "update_time";
+    private static final String DEPARTURE_CITY_ID = "departure_city_id";
+    private static final String ARRIVAL_CITY_ID = "arrival_city_id";
     private static final String START_STATION_ID = "start_station_id";
     private static final String DEPARTURE_TIME = "departure_time";
     private static final String TRAVEL_TIME = "travel_time";
@@ -32,13 +37,13 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     private static final String RELEVANT = "relevant";
 
     // SQL requests
-    private static final String ADD_ROUTE = "INSERT INTO route(create_time, update_time, start_station_id, departure_time, travel_time" +
-            ", arrival_station_id, arrival_time, train_id, number_of_free_seats, prise_of_ticket, relevant) VALUE(?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String ADD_ROUTE = "INSERT INTO route(create_time, update_time, departure_city_id,arrival_city_id, start_station_id, departure_time, travel_time" +
+            ", arrival_station_id, arrival_time, train_id, number_of_free_seats, prise_of_ticket, relevant) VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?)";
     private static final String SET_ROUTE_RELEVANT = "UPDATE route SET relevant = ? WHERE id = ?";
     private static final String FIND_ROUTE_BETWEEN_TWO_STATIONS = "SELECT * FROM route WHERE start_station_id = ? AND arrival_station_id = ? AND departure_time BETWEEN ? and ?";
     private static final String FIND_ROUTE_BETWEEN_TWO_CITES = "SELECT * FROM route as R\n" +
-            "LEFT OUTER JOIN station_list as S on R.start_station_id = S.id\n" +
-            "LEFT OUTER JOIN station_list as SL on R.arrival_station_id = SL.id\n" +
+            "LEFT OUTER JOIN station as S on R.start_station_id = S.id\n" +
+            "LEFT OUTER JOIN station as SL on R.arrival_station_id = SL.id\n" +
             "WHERE S.city_id = ? and SL.city_id = ? AND departure_time BETWEEN ? and ?";
     private static final String FIND_ROUTE_BY_ID = "SELECT * FROM route WHERE id = ?";
     private static final String FIND_ALL_ROUTES = "SELECT * FROM route";
@@ -65,23 +70,28 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(ADD_ROUTE);
             Calendar calendar = Calendar.getInstance();
-            StationDAOImpl stationDAO = DAOFactory.getInstance().getStationDAO();
-            TrainDAOImpl trainDAO = DAOFactory.getInstance().getTrainDAO();
+            StationDAO stationDAO = DAOFactory.getInstance().getStationDAO();
+            CityDAO cityDAO = DAOFactory.getInstance().getCityDAO();
+            TrainDAO trainDAO = DAOFactory.getInstance().getTrainDAO();
             Long startStationID = stationDAO.findStationByStationName(route.getStartStation()).getID();
             Long arrivalStationID = stationDAO.findStationByStationName(route.getArrivalStation()).getID();
+            Long departureCityID = cityDAO.findCityByCityName(route.getDepartureCity()).getID();
+            Long arrivalCityID = cityDAO.findCityByCityName(route.getArrivalCity()).getID();
             Long trainID = trainDAO.findTrainByTrainNumber(route.getTrain()).getID();
             java.sql.Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
             preparedStatement.setTimestamp(1,timestamp);
             preparedStatement.setTimestamp(2,timestamp);
-            preparedStatement.setLong(3,startStationID);
-            preparedStatement.setTimestamp(4, Timestamp.valueOf(route.getDepartureTime()));
-            preparedStatement.setTime(5, Time.valueOf(route.getTravelTime()));
-            preparedStatement.setLong(6,arrivalStationID);
-            preparedStatement.setTimestamp(7, Timestamp.valueOf(route.getArrivalTime()));
-            preparedStatement.setLong(8,trainID);
-            preparedStatement.setInt(9,route.getNumberOfFreeSeats());
-            preparedStatement.setBigDecimal(10,route.getPriseOfTicket());
-            preparedStatement.setBoolean(11,true);
+            preparedStatement.setLong(3,departureCityID);
+            preparedStatement.setLong(4,arrivalCityID);
+            preparedStatement.setLong(5,startStationID);
+            preparedStatement.setTimestamp(6, Timestamp.valueOf(route.getDepartureTime()));
+            preparedStatement.setTime(7, Time.valueOf(route.getTravelTime()));
+            preparedStatement.setLong(8,arrivalStationID);
+            preparedStatement.setTimestamp(9, Timestamp.valueOf(route.getArrivalTime()));
+            preparedStatement.setLong(10,trainID);
+            preparedStatement.setInt(11,route.getNumberOfFreeSeats());
+            preparedStatement.setBigDecimal(12,route.getPriseOfTicket());
+            preparedStatement.setBoolean(13,true);
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -259,11 +269,14 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
         Long id = rs.getLong(ID);
         LocalDateTime createTime = rs.getTimestamp(CREATE_TIME).toLocalDateTime();
         LocalDateTime updateTime = rs.getTimestamp(UPDATE_TIME).toLocalDateTime();
-        StationDAOImpl stationDAO = DAOFactory.getInstance().getStationDAO();
-        TrainDAOImpl trainDAO = DAOFactory.getInstance().getTrainDAO();
+        StationDAO stationDAO = DAOFactory.getInstance().getStationDAO();
+        TrainDAO trainDAO = DAOFactory.getInstance().getTrainDAO();
+        CityDAO cityDAO = DAOFactory.getInstance().getCityDAO();
         String startStation = stationDAO.findStationByID(rs.getLong(START_STATION_ID)).getStationName();
         LocalDateTime departureTime = rs.getTimestamp(DEPARTURE_TIME).toLocalDateTime();
         LocalTime travelTime = LocalTime.parse(new SimpleDateFormat("HH:mm").format(rs.getTime(TRAVEL_TIME)));
+        String departureCity = cityDAO.findCityByID(rs.getLong(DEPARTURE_CITY_ID)).getCityName();
+        String arrivalCity = cityDAO.findCityByID(rs.getLong(ARRIVAL_CITY_ID)).getCityName();
         String arrivalStation = stationDAO.findStationByID(rs.getLong(ARRIVAL_STATION_ID)).getStationName();
         LocalDateTime arrivalTime = rs.getTimestamp(ARRIVAL_TIME).toLocalDateTime();
         int numberOfFreeSeats = rs.getInt(NUMBER_OF_FREE_SEATS);
@@ -273,6 +286,8 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
         route.setID(id);
         route.setCreateTime(createTime);
         route.setUpdateTime(updateTime);
+        route.setDepartureCity(departureCity);
+        route.setArrivalCity(arrivalCity);
         route.setStartStation(startStation);
         route.setDepartureTime(departureTime);
         route.setTravelTime(travelTime);

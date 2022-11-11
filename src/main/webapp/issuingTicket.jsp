@@ -85,7 +85,7 @@
                             <div class="col-sm-8">
                                 <p class="text-muted mb-0">
                                     <%--<fmt:formatDate value="${requestScope.selectedRoute.departureTime}" pattern="yyyy-MM-dd HH:mm:ss" />--%>
-                                        <%--${f:formatLocalDateTime(requestScope.selectedRoute.departureTime, 'yyyy-MM-dd HH:mm:ss')}--%>
+                                        ${f:formatLocalDateTime(requestScope.selectedRoute.departureTime, 'yyyy-MM-dd HH:mm:ss')}
 
                                 </p>
                             </div>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-sm-8">
                                 <p class="text-muted mb-0">
-                                    <%--${f:formatLocalDateTime(requestScope.selectedRoute.arrivalTime, 'yyyy-MM-dd HH:mm:ss')}--%>
+                                    ${f:formatLocalDateTime(requestScope.selectedRoute.arrivalTime, 'yyyy-MM-dd HH:mm:ss')}
                                 </p>
                             </div>
                         </div>

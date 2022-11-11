@@ -31,7 +31,7 @@
                     <a class="btn btn-outline-dark btn-floating m-1" href="https://www.linkedin.com/in/ihorlosinskyi" role="button">
                         <i class="bi bi-linkedin"></i>
                     </a>
-                    <a class="btn btn-outline-dark btn-floating m-1" href="https://github.com/A3azel/Railway-Ticket-Office.git" role="button">
+                    <a class="btn btn-outline-dark btn-floating m-1" href="https://github.com/A3azel/Web_on_Java_2-3" role="button">
                         <i class="bi bi-github"></i>
                     </a>
                 </section>

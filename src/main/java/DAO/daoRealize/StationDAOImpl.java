@@ -22,12 +22,12 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
     private static final String CITY_ID = "city_id";
 
     // SQL requests
-    private static final String ADD_STATION = "INSERT INTO station_list(create_time,update_time,station_name,relevant,city_id) VALUE(?,?,?,?,?)";
-    private static final String UPDATE_STATION = "UPDATE station_list SET update_time= ?, station_name = ?,relevant = ?, city_id = ? WHERE id = ?";
-    private static final String SET_STATION_RELEVANT = "UPDATE station_list SET relevant = ? WHERE station_name = ?";
-    private static final String FIND_STATION = "SELECT * FROM station_list WHERE station_name = ?";
-    private static final String FIND_STATION_BY_ID = "SELECT * FROM station_list WHERE ID = ?";
-    private static final String FIND_ALL_STATION = "SELECT * FROM station_list";
+    private static final String ADD_STATION = "INSERT INTO station(create_time,update_time,station_name,relevant,city_id) VALUE(?,?,?,?,?)";
+    private static final String UPDATE_STATION = "UPDATE station SET update_time= ?, station_name = ?,relevant = ?, city_id = ? WHERE id = ?";
+    private static final String SET_STATION_RELEVANT = "UPDATE station SET relevant = ? WHERE station_name = ?";
+    private static final String FIND_STATION = "SELECT * FROM station WHERE station_name = ?";
+    private static final String FIND_STATION_BY_ID = "SELECT * FROM station WHERE ID = ?";
+    private static final String FIND_ALL_STATION = "SELECT * FROM station";
 
     private static StationDAOImpl stationDAO;
 

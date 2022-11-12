@@ -1,7 +1,5 @@
 package command.customeCommand;
 
-import DAO.DAOFactory;
-import DAO.UserDAOImpl;
 import command.Command;
 import entity.User;
 import service.ServiceFactory;
@@ -15,10 +13,6 @@ import java.io.IOException;
 public class OfficeCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getSession().getAttribute("username") == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
         String username = (String) request.getSession().getAttribute("username");
         if (username==null){
             request.getRequestDispatcher("login.jsp").forward(request,response);
@@ -26,7 +20,6 @@ public class OfficeCommand implements Command {
         }
 
         if(request.getSession().getAttribute("user") == null){
-            //UserDAOImpl userDAO = DAOFactory.getInstance().getUserDAO();
             UserService userService = ServiceFactory.getInstance().getUserService();
 
             User user = userService.findUserByUsername(username);

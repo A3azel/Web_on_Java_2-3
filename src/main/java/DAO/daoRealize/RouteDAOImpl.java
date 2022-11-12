@@ -42,11 +42,16 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     private static final String SET_ROUTE_RELEVANT = "UPDATE route SET relevant = ? WHERE id = ?";
     private static final String FIND_ROUTE_BETWEEN_TWO_STATIONS = "SELECT * FROM route WHERE start_station_id = ? AND arrival_station_id = ? AND departure_time BETWEEN ? and ?";
     private static final String FIND_ROUTE_BETWEEN_TWO_CITES = "SELECT * FROM route as R\n" +
-            "LEFT OUTER JOIN station as S on R.start_station_id = S.id\n" +
+            "LEFT OUTER JOIN station as S on R.start_station_id = S.id\n " +
+            "LEFT OUTER JOIN station as SL on R.arrival_station_id = SL.id\n" +
+            "WHERE S.city_id = ? and SL.city_id = ? AND departure_time BETWEEN ? and ? limit ?,?";
+    private static final String FIND_ROUTE_BETWEEN_TWO_CITES_COUNT = "SELECT COUNT(R.id) AS k FROM route as R\n" +
+            "LEFT OUTER JOIN station as S on R.start_station_id = S.id\n " +
             "LEFT OUTER JOIN station as SL on R.arrival_station_id = SL.id\n" +
             "WHERE S.city_id = ? and SL.city_id = ? AND departure_time BETWEEN ? and ?";
     private static final String FIND_ROUTE_BY_ID = "SELECT * FROM route WHERE id = ?";
-    private static final String FIND_ALL_ROUTES = "SELECT * FROM route";
+    private static final String FIND_ALL_ROUTES = "SELECT * FROM route limit ?,?";
+    private static final String FIND_ALL_ROUTES_COUNT = "SELECT COUNT(id) AS k FROM route";
 
     private static RouteDAOImpl routeDAO;
 
@@ -109,7 +114,7 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     }
 
     @Override
-    public List<Route> findAllRouts(){
+    public List<Route> findAllRouts(int offset, int noOfRecords){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         List<Route> routeList = new ArrayList<>();
@@ -117,6 +122,8 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_ALL_ROUTES);
+            preparedStatement.setInt(1, offset);
+            preparedStatement.setInt(2, noOfRecords);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 routeList.add(helpToBuildRote(rs));
@@ -135,6 +142,34 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             DAOHelperMethods.closeCon(con);
         }
         return routeList;
+    }
+
+    @Override
+    public int allRoutsCount() {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            preparedStatement = con.prepareStatement(FIND_ALL_ROUTES_COUNT);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()){
+                return rs.getInt("k");
+            }
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+        return 0;
     }
 
     @Override
@@ -229,7 +264,7 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     }
 
     @Override
-    public List<Route> findAllBetweenTwoCites(String startCity, String arrivalCity, LocalDate data, LocalTime localTime){
+    public List<Route> findAllBetweenTwoCites(String startCity, String arrivalCity, LocalDate data, LocalTime localTime, int offset, int noOfRecords){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         List<Route> routeList = new ArrayList<>();
@@ -238,12 +273,18 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(FIND_ROUTE_BETWEEN_TWO_CITES);
-            preparedStatement.setLong(1,cityDAO.findCityByCityName(startCity).getID());
-            preparedStatement.setLong(2,cityDAO.findCityByCityName(arrivalCity).getID());
+
+            Long startCityID = cityDAO.findCityByCityName(startCity).getID();
+            Long arrivalCityID = cityDAO.findCityByCityName(arrivalCity).getID();
             LocalDateTime localDateTime = LocalDateTime.of(data,localTime);
             LocalDateTime finalLocalDateTime = localDateTime.plusDays(7);
+
+            preparedStatement.setLong(1,startCityID);
+            preparedStatement.setLong(2,arrivalCityID);
             preparedStatement.setTimestamp(3, Timestamp.valueOf(localDateTime));
             preparedStatement.setTimestamp(4, Timestamp.valueOf(finalLocalDateTime));
+            preparedStatement.setInt(5, offset);
+            preparedStatement.setInt(6, noOfRecords);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 routeList.add(helpToBuildRote(rs));
@@ -262,6 +303,46 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             DAOHelperMethods.closeCon(con);
         }
         return routeList;
+    }
+
+    @Override
+    public int allBetweenTwoCitesCount(String startCity, String arrivalCity, LocalDate data, LocalTime localTime) {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        List<Route> routeList = new ArrayList<>();
+        try {
+            CityDAOImpl cityDAO = DAOFactory.getInstance().getCityDAO();
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            preparedStatement = con.prepareStatement(FIND_ROUTE_BETWEEN_TWO_CITES_COUNT);
+
+            Long startCityID = cityDAO.findCityByCityName(startCity).getID();
+            Long arrivalCityID = cityDAO.findCityByCityName(arrivalCity).getID();
+            LocalDateTime localDateTime = LocalDateTime.of(data,localTime);
+            LocalDateTime finalLocalDateTime = localDateTime.plusDays(7);
+
+            preparedStatement.setLong(1,startCityID);
+            preparedStatement.setLong(2,arrivalCityID);
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(localDateTime));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(finalLocalDateTime));
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()){
+                return rs.getInt("k");
+            }
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+        return 0;
     }
 
     public Route helpToBuildRote(ResultSet rs) throws SQLException {

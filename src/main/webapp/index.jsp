@@ -56,6 +56,7 @@
             </div>
             <form action="controller" method="get">
                 <input type="hidden" name="action" value="trainsBetweenCities">
+                <input type="hidden" name="page" value="1">
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <div class="input-group mb-3">
@@ -109,8 +110,6 @@
             </form>
         </div>
     </main>
-    <a href="login.jsp">login</a>
-
     <footer>
         <jsp:include page="footer.jsp" />
     </footer>

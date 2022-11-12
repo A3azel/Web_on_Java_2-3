@@ -9,11 +9,13 @@ import java.util.Map;
 
 public interface UserService {
     Map<String, String> addUser(User user,String submitPassword);
-    List<User> findAllUsers();
+    List<User> findAllUsers(int offset, int noOfRecords);
+    int allUsersCount();
     User findUserByUsername(String username);
     User findUserByID(Long id);
+    String findUserPassword(String username);
     boolean isEmailExist(String email);
-    void setUserAccountVerified(String username);
+    void setUserAccountVerified(Long id);
     void topUpAccount(String money, String username) throws InvalidCountOfMoney;
     void spendMoney(BigDecimal money,String username);
     boolean isUserExist(String username,String password);

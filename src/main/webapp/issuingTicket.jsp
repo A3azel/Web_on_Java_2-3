@@ -49,7 +49,7 @@
                             </div>
                             <div class="col-sm-8">
                                 <p class="text-muted mb-0">
-                                   <%-- ${selectedRoute.startStation.city.cityName} / ${selectedRoute.arrivalStation.city.cityName}--%>
+                                   ${requestScope.selectedRoute.departureCity} / ${requestScope.selectedRoute.arrivalCity}
                                 </p>
                             </div>
                         </div>

@@ -1,8 +1,5 @@
 package command.customeCommand;
 
-import DAO.DAOFactory;
-import DAO.daoRealize.CityDAOImpl;
-import DAO.daoRealize.RouteDAOImpl;
 import command.Command;
 import entity.Route;
 import service.ServiceFactory;
@@ -21,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public class MainCommand implements Command {
+    private int page = 1;
+    private static final int RECORDS_PER_PAGE = 10;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -31,11 +30,8 @@ public class MainCommand implements Command {
         String stringTime = request.getParameter("selectedTime");
         LocalDate departureData = LocalDate.parse(stringData);
         LocalTime departureTime = LocalTime.parse(stringTime);
-
+//
         Map<String,String> errorAttribute = new HashMap<>();
-
-        //RouteDAOImpl routeDAO = DAOFactory.getInstance().getRouteDAO();
-        //CityDAOImpl cityDAO = DAOFactory.getInstance().getCityDAO();
 
         CityService cityService = ServiceFactory.getInstance().getCityService();
         RouteService routeService = ServiceFactory.getInstance().getRouteService();
@@ -67,7 +63,11 @@ public class MainCommand implements Command {
             passToErrorPage(request,response,errorAttribute);
             return;
         }
-        List<Route> routeList = routeService.findAllBetweenTwoCites(departureCity,arrivalCity,departureData,departureTime);
+//
+        if(request.getParameter("page") != null){
+            page = Integer.parseInt(request.getParameter("page"));
+        }
+        List<Route> routeList = routeService.findAllBetweenTwoCites(departureCity,arrivalCity,departureData,departureTime,(page-1)*RECORDS_PER_PAGE, RECORDS_PER_PAGE);
         if(routeList.size()==0){
             errorAttribute.put("routeErrors","Route not found");
         }
@@ -76,10 +76,19 @@ public class MainCommand implements Command {
             return;
         }
 
+        int noOfRecords = routeService.allBetweenTwoCitesCount(departureCity,arrivalCity,departureData,departureTime);
+        int countOfPages = (int) Math.ceil(noOfRecords * 1.0 / RECORDS_PER_PAGE);
+
+        request.setAttribute("departureCity",departureCity);
+        request.setAttribute("arrivalCity",arrivalCity);
+        request.setAttribute("departureData",stringData);
+        request.setAttribute("departureTime",stringTime);
+
+        request.setAttribute("countOfPages", countOfPages);
+        request.setAttribute("currentPage", page);
         request.setAttribute("routeList",routeList);
+
         request.getRequestDispatcher("selectedRouts.jsp").forward(request,response);
-
-
     }
 
     public void passToErrorPage(HttpServletRequest request, HttpServletResponse response, Map<String,String> errorMap){

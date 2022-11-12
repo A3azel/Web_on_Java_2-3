@@ -39,10 +39,14 @@
                            ${sessionScope.user.username}
                         </p>
                         <div class="d-flex justify-content-center mb-3">
-                            <form method="get" action="controller">
-                                <input type="hidden" name="action" value="userPurchasedTickets">
-                                <button type="submit" class="btn btn-primary">Придбані білети</button>
-                            </form>
+                        <c:choose>
+                            <c:when test="${sessionScope.user.userRole.equals('USER')}">
+                                <form method="get" action="controller">
+                                    <input type="hidden" name="action" value="userPurchasedTickets">
+                                    <button type="submit" class="btn btn-primary">Придбані білети</button>
+                                </form>
+                            </c:when>
+                        </c:choose>
                             <form method="post" action="controller">
                                 <input type="hidden" name="action" value="logout">
                                 <button type="submit" class="btn btn-outline-primary ms-1">
@@ -109,9 +113,16 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <form action="#" method="post">
-                            <button name="userIDPost" >Список користувачів</button>
-                            <button name="upgradeUser">Список потягів</button>
+                        <form action="controller" method="get">
+                            <input type="hidden" name="action" value="allUsers">
+                            <button name="userIDPost" class="btn btn-outline-primary" type="submit" >Список користувачів</button>
+                        </form>
+                        <form action="#" method="get">
+                            <button name="upgradeUser" class="btn btn-outline-primary" type="submit">Список потягів</button>
+                        </form>
+                        <form action="controller" method="get">
+                            <input type="hidden" name="action" value="allRoutsForAdmin">
+                            <button name="userIDPost" class="btn btn-outline-primary" type="submit" >Список маршрутів</button>
                         </form>
                     </c:otherwise>
                 </c:choose>

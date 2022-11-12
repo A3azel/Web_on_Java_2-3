@@ -28,11 +28,13 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     // SQL requests
     private static final String ADD_USER = "INSERT INTO user_info(create_time, update_time, username, first_name, last_name, user_password" +
             ", user_count_of_money, account_verified, user_email, role_id) VALUE(?,?,?,?,?,?,?,?,?,?)";
-    private static final String SET_USER_ACCOUNT_VERIFIED = "UPDATE user_info SET account_verified = ? WHERE username = ?";
+    private static final String SET_USER_ACCOUNT_VERIFIED = "UPDATE user_info SET account_verified = ? WHERE id = ?";
+    private static final String FIND_USER_PASSWORD = "SELECT user_password FROM user_info WHERE username = ?";
     private static final String FIND_USER = "SELECT * FROM user_info WHERE username = ?";
     private static final String FIND_USER_BY_ID = "SELECT * FROM user_info WHERE id = ?";
     private static final String FIND_USER_BY_EMAIL = "SELECT * FROM user_info WHERE user_email = ?";
-    private static final String FIND_ALL_USERS = "SELECT * FROM user_info";
+    private static final String FIND_ALL_USERS = "SELECT * FROM user_info limit ?,?";
+    private static final String FIND_ALL_USERS_COUNT = "SELECT COUNT(id) AS k FROM user_info";
     private static final String TOP_UP_ACCOUNT = "UPDATE user_info SET user_count_of_money = user_count_of_money + ? WHERE username = ?";
     private static final String SPEND_MONEY = "UPDATE user_info SET user_count_of_money = user_count_of_money - ? WHERE username = ?";
     private static final String IS_USER_EXIST = "SELECT * FROM user_info WHERE username = ? AND user_password = ?";
@@ -92,7 +94,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    public List<User> findAllUsers(){
+    public List<User> findAllUsers(int offset, int noOfRecords){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         List<User> userList = new ArrayList<>();
@@ -100,6 +102,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_ALL_USERS);
+            preparedStatement.setInt(1,offset);
+            preparedStatement.setInt(2,noOfRecords);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 userList.add(helpToBuildUser(rs));
@@ -118,6 +122,34 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             DAOHelperMethods.closeCon(con);
         }
         return userList;
+    }
+
+    @Override
+    public int allUsersCount() {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            preparedStatement = con.prepareStatement(FIND_ALL_USERS_COUNT);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()){
+                return rs.getInt("k");
+            }
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+        return 0;
     }
 
     @Override
@@ -176,6 +208,35 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
+    public String findUserPasswordByUsername(String username) {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            preparedStatement = con.prepareStatement(FIND_USER_PASSWORD);
+            preparedStatement.setString(1,username);
+            ResultSet rs = preparedStatement.executeQuery();
+            if(rs.next()){
+                con.commit();
+                return rs.getString(USER_PASSWORD);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+        return null;
+    }
+
+    @Override
     public User findUserByID(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
@@ -205,20 +266,20 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    public void setUserAccountVerified(String username){
+    public void setUserAccountVerified(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(SET_USER_ACCOUNT_VERIFIED);
-            if(findUserByUsername(username)==null){
+            if(findUserByID(id)==null){
                 System.out.println("user not found");
                 return;
             }
-            boolean relevant = findUserByUsername(username).isAccountVerified();
+            boolean relevant = findUserByID(id).isAccountVerified();
             preparedStatement.setBoolean(1,!relevant);
-            preparedStatement.setString(2,username);
+            preparedStatement.setLong(2,id);
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {

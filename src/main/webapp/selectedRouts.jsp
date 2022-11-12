@@ -11,7 +11,6 @@
 <html>
 <head>
     <title>Title</title>
-    <title>all trains</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
@@ -104,6 +103,110 @@
             </c:forEach>
             </tbody>
         </table>
+        <nav aria-label="...">
+            <ul class="pagination justify-content-center">
+                <%--First--%>
+                <c:choose>
+                    <c:when test="${requestScope.currentPage>1}">
+                        <li class="page-item">
+                            <a class="page-link" href = "controller?action=trainsBetweenCities&page=${1}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">First</a>
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">First</a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
+                    <%-- Previous --%>
+                <c:choose>
+                    <c:when test="${requestScope.currentPage>1}">
+                        <li class="page-item">
+                            <a class="page-link" href = "controller?action=trainsBetweenCities&page=${requestScope.currentPage-1}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">Previous</a>
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
+                    <%-- Main --%>
+                <c:choose>
+                    <c:when test="${requestScope.countOfPages<=10}">
+                        <c:forEach var="i" begin="1" end="${requestScope.countOfPages}">
+                            <c:choose>
+                                <c:when test="${i==requestScope.currentPage}">
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">${i}</span>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="page-item">
+                                        <a class="page-link" href = "controller?action=trainsBetweenCities&page=${i}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">${i}</a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                    </c:when>
+                </c:choose>
+
+                <c:choose>
+                    <c:when test="${requestScope.countOfPages>10}">
+                        <c:choose>
+                            <c:when test="${requestScope.currentPage <= 5 || requestScope.currentPage > requestScope.countOfPages-4}">
+                                <c:forEach var="i" begin="1" end="5">
+                                    <li class="${requestScope.currentPage != i ? 'page-item' : 'page-item active'}">
+                                        <a class="page-link" href = "controller?action=trainsBetweenCities&page=${i}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">${i}</a>
+                                    </li>
+                                </c:forEach>
+                                <a class="page-link" href = "controller?action=trainsBetweenCities&page=6&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">...</a>
+                                <c:forEach var="i" begin="${requestScope.countOfPages-4}" end="${requestScope.countOfPages}">
+                                    <li class="${requestScope.currentPage != i ? 'page-item' : 'page-item active'}">
+                                        <a class="page-link" href = "controller?action=trainsBetweenCities&page=${i}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">${i}</a>
+                                    </li>
+                                </c:forEach>
+                            </c:when>
+                            <c:when test="${requestScope.currentPage > 5 && requestScope.currentPage < requestScope.countOfPages-4}">
+                                <c:forEach var="i" begin="1" end="5">
+                                    <li class="${requestScope.currentPage != i ? 'page-item' : 'page-item active'}">
+                                        <a class="page-link" href = "controller?action=trainsBetweenCities&page=${requestScope.currentPage-5}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">...</a>
+                                    </li>
+                                </c:forEach>
+                            </c:when>
+                        </c:choose>
+                    </c:when>
+                </c:choose>
+
+                    <%--Next--%>
+                    <c:choose>
+                        <c:when test="${requestScope.currentPage<requestScope.countOfPages}">
+                            <li class="page-item">
+                                <a class="page-link" href = "controller?action=trainsBetweenCities&page=${requestScope.currentPage+1}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">Next</a>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <%--Last--%>
+                    <c:choose>
+                        <c:when test="${requestScope.currentPage<requestScope.countOfPages}">
+                            <li class="page-item">
+                                <a class="page-link" href = "controller?action=trainsBetweenCities&page=${requestScope.countOfPages}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">Last</a>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Last</a>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
+           </ul>
+        </nav>
     </main>
     <footer>
         <jsp:include page="footer.jsp" />

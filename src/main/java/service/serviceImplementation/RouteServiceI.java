@@ -31,8 +31,13 @@ public class RouteServiceI implements RouteService {
     }
 
     @Override
-    public List<Route> findAllRouts() {
-        return routeDAO.findAllRouts();
+    public List<Route> findAllRouts(int offset, int noOfRecords) {
+        return routeDAO.findAllRouts(offset, noOfRecords);
+    }
+
+    @Override
+    public int allRoutsCount() {
+        return routeDAO.allRoutsCount();
     }
 
     @Override
@@ -51,7 +56,12 @@ public class RouteServiceI implements RouteService {
     }
 
     @Override
-    public List<Route> findAllBetweenTwoCites(String startCity, String arrivalCity, LocalDate data, LocalTime localTime) {
-        return routeDAO.findAllBetweenTwoCites(startCity, arrivalCity, data, localTime);
+    public List<Route> findAllBetweenTwoCites(String startCity, String arrivalCity, LocalDate data, LocalTime localTime, int offset, int noOfRecords) {
+        return routeDAO.findAllBetweenTwoCites(startCity, arrivalCity, data, localTime, offset, noOfRecords);
+    }
+
+    @Override
+    public int allBetweenTwoCitesCount(String startCity, String arrivalCity, LocalDate data, LocalTime localTime) {
+        return routeDAO.allBetweenTwoCitesCount(startCity, arrivalCity, data, localTime);
     }
 }

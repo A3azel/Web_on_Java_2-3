@@ -27,7 +27,8 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
     private static final String SET_STATION_RELEVANT = "UPDATE station SET relevant = ? WHERE station_name = ?";
     private static final String FIND_STATION = "SELECT * FROM station WHERE station_name = ?";
     private static final String FIND_STATION_BY_ID = "SELECT * FROM station WHERE ID = ?";
-    private static final String FIND_ALL_STATION = "SELECT * FROM station";
+    private static final String FIND_ALL_STATION = "SELECT * FROM station limit ?,?";
+    private static final String FIND_ALL_STATION_COUNT = "SELECT COUNT(id) AS k FROM station";
 
     private static StationDAOImpl stationDAO;
 
@@ -105,7 +106,7 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
     }
 
     @Override
-    public List<Station> findAllStations(){
+    public List<Station> findAllStations(int offset, int noOfRecords){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         List<Station> stationList = new ArrayList<>();
@@ -113,6 +114,8 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_ALL_STATION);
+            preparedStatement.setInt(1,offset);
+            preparedStatement.setInt(2,noOfRecords);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 stationList.add(helpToBuildStation(rs));
@@ -131,6 +134,34 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             DAOHelperMethods.closeCon(con);
         }
         return stationList;
+    }
+
+    @Override
+    public int allStationsCount() {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            preparedStatement = con.prepareStatement(FIND_ALL_STATION_COUNT);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()){
+                return rs.getInt("k");
+            }
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+        return 0;
     }
 
     @Override

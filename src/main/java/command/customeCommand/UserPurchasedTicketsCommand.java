@@ -19,6 +19,10 @@ public class UserPurchasedTicketsCommand implements Command {
             response.sendRedirect("login.jsp");
             return;
         }
+        if (request.getSession().getAttribute("username") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
         User user = (User)request.getSession().getAttribute("user");
         OrderService orderService = ServiceFactory.getInstance().getOrderService();
         List<Order> orderList = orderService.findAllUsersOrders(user.getUsername());

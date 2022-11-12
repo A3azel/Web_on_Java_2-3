@@ -33,6 +33,7 @@ public class LoginCommand implements Command {
             passToErrorPage(request,response,errorAttribute);
             return;
         }
+        System.out.println(username);
         boolean isAccountVerified = userService.findUserByUsername(username).isAccountVerified();
 
         if (!isAccountVerified){

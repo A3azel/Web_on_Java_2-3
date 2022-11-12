@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: Lenovo
-  Date: 08.11.2022
-  Time: 23:49
+  Date: 12.11.2022
+  Time: 02:36
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -17,6 +17,7 @@
     <link href="CSS/footer.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+
 <div class="wrapper">
     <header>
         <jsp:include page="header.jsp" />
@@ -56,25 +57,23 @@
                 </th>
                 <th scope="col">
                     <p>
-                        Придбати
+                        Редагувати/Заблокувати/Видалити
                     </p>
                 </th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="route" items="${requestScope.routeList}">
+            <c:forEach var="route" items="${requestScope.routeListForAdmin}">
                 <tr>
                     <td >
-                        ${route.train}
+                            ${route.train}
                     </td>
                     <td>
                             ${route.startStation}/${route.arrivalStation}
                     </td>
                     <td>
-                       <%-- <fmt:formatDate value="${route.departureTime}" pattern="yyyy-MM-dd HH:mm:ss" /> <br>
-                        <fmt:formatDate value="${route.arrivalTime}" pattern="yyyy-MM-dd HH:mm:ss" />--%>
-                               ${f:formatLocalDateTime(route.departureTime, 'yyyy-MM-dd HH:mm:ss')}
-                               ${f:formatLocalDateTime(route.arrivalTime, 'yyyy-MM-dd HH:mm:ss')}
+                            ${f:formatLocalDateTime(route.departureTime, 'yyyy-MM-dd HH:mm:ss')} /
+                            ${f:formatLocalDateTime(route.arrivalTime, 'yyyy-MM-dd HH:mm:ss')}
                     </td>
 
                     <td>
@@ -87,16 +86,33 @@
                             ${route.priseOfTicket}
                     </td>
                     <td>
-                        <div class="container" style="width:250px; text-align:end;">
-                            <div class="row">
-                                <div class="col">
-                                    <form action="controller" method="get">
-                                        <input type="hidden" name="action" value="order">
-                                        <input type="hidden" name="id" value="${route.ID}">
-                                        <button type="submit" class="btn btn-outline-primary">Оформити квиток</button>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <form method="get" action="controller">
+                                <button type="submit" class="btn btn-outline-info">Редагувати</button>
+                            </form>
+                            <c:choose>
+                                <c:when test="${route.relevant.equals(true)}">
+                                    <form method="post" action="controller">
+                                        <input type="hidden" name="action" value="allUsers">
+                                        <input type="hidden" name="routeID" value="${route.ID}">
+                                        <button type="submit" class="btn btn-outline-warning">
+                                            Заблокувати
+                                        </button>
                                     </form>
-                                </div>
-                            </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <form method="post" action="controller">
+                                        <input type="hidden" name="action" value="allUsers">
+                                        <input type="hidden" name="routeID" value="${route.ID}">
+                                        <button type="submit" class="btn btn-outline-success">
+                                            Розблокувати
+                                        </button>
+                                    </form>
+                                </c:otherwise>
+                            </c:choose>
+                            <form method="get" action="controller">
+                                <button type="submit" class="btn btn-outline-danger">Видалити</button>
+                            </form>
                         </div>
                     </td>
                 </tr>
@@ -109,7 +125,7 @@
                 <c:choose>
                     <c:when test="${requestScope.currentPage>1}">
                         <li class="page-item">
-                            <a class="page-link" href = "controller?action=trainsBetweenCities&page=${1}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">First</a>
+                            <a class="page-link" href = "controller?action=allRoutsForAdmin&page=${1}">First</a>
                         </li>
                     </c:when>
                     <c:otherwise>
@@ -118,11 +134,11 @@
                         </li>
                     </c:otherwise>
                 </c:choose>
-                    <%-- Previous --%>
+                <%-- Previous --%>
                 <c:choose>
                     <c:when test="${requestScope.currentPage>1}">
                         <li class="page-item">
-                            <a class="page-link" href = "controller?action=trainsBetweenCities&page=${requestScope.currentPage-1}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">Previous</a>
+                            <a class="page-link" href = "controller?action=allRoutsForAdmin&page=${requestScope.currentPage-1}">Previous</a>
                         </li>
                     </c:when>
                     <c:otherwise>
@@ -131,7 +147,7 @@
                         </li>
                     </c:otherwise>
                 </c:choose>
-                    <%-- Main --%>
+                <%-- Main --%>
                 <c:choose>
                     <c:when test="${requestScope.countOfPages<=10}">
                         <c:forEach var="i" begin="1" end="${requestScope.countOfPages}">
@@ -143,7 +159,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <li class="page-item">
-                                        <a class="page-link" href = "controller?action=trainsBetweenCities&page=${i}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">${i}</a>
+                                        <a class="page-link" href = "controller?action=allRoutsForAdmin&page=${i}">${i}</a>
                                     </li>
                                 </c:otherwise>
                             </c:choose>
@@ -157,20 +173,20 @@
                             <c:when test="${requestScope.currentPage <= 5 || requestScope.currentPage > requestScope.countOfPages-4}">
                                 <c:forEach var="i" begin="1" end="5">
                                     <li class="${requestScope.currentPage != i ? 'page-item' : 'page-item active'}">
-                                        <a class="page-link" href = "controller?action=trainsBetweenCities&page=${i}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">${i}</a>
+                                        <a class="page-link" href = "controller?action=allRoutsForAdmin&page=${i}">${i}</a>
                                     </li>
                                 </c:forEach>
-                                <a class="page-link" href = "controller?action=trainsBetweenCities&page=6&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">...</a>
+                                <a class="page-link" href = "controller?action=allRoutsForAdmin&page=6">...</a>
                                 <c:forEach var="i" begin="${requestScope.countOfPages-4}" end="${requestScope.countOfPages}">
                                     <li class="${requestScope.currentPage != i ? 'page-item' : 'page-item active'}">
-                                        <a class="page-link" href = "controller?action=trainsBetweenCities&page=${i}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">${i}</a>
+                                        <a class="page-link" href = "controller?action=allRoutsForAdmin&page=${i}">${i}</a>
                                     </li>
                                 </c:forEach>
                             </c:when>
                             <c:when test="${requestScope.currentPage > 5 && requestScope.currentPage < requestScope.countOfPages-4}">
                                 <c:forEach var="i" begin="1" end="5">
                                     <li class="${requestScope.currentPage != i ? 'page-item' : 'page-item active'}">
-                                        <a class="page-link" href = "controller?action=trainsBetweenCities&page=${requestScope.currentPage-5}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">...</a>
+                                        <a class="page-link" href = "controller?action=allRoutsForAdmin&page=${requestScope.currentPage-5}">...</a>
                                     </li>
                                 </c:forEach>
                             </c:when>
@@ -178,34 +194,34 @@
                     </c:when>
                 </c:choose>
 
-                    <%--Next--%>
-                    <c:choose>
-                        <c:when test="${requestScope.currentPage<requestScope.countOfPages}">
-                            <li class="page-item">
-                                <a class="page-link" href = "controller?action=trainsBetweenCities&page=${requestScope.currentPage+1}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">Next</a>
-                            </li>
-                        </c:when>
-                        <c:otherwise>
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
-                            </li>
-                        </c:otherwise>
-                    </c:choose>
+                <%--Next--%>
+                <c:choose>
+                    <c:when test="${requestScope.currentPage<requestScope.countOfPages}">
+                        <li class="page-item">
+                            <a class="page-link" href = "controller?action=allRoutsForAdmin&page=${requestScope.currentPage+1}">Next</a>
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
 
-                    <%--Last--%>
-                    <c:choose>
-                        <c:when test="${requestScope.currentPage<requestScope.countOfPages}">
-                            <li class="page-item">
-                                <a class="page-link" href = "controller?action=trainsBetweenCities&page=${requestScope.countOfPages}&cityOfDeparture=${requestScope.departureCity}&cityOfArrival=${requestScope.arrivalCity}&selectedDates=${requestScope.departureData}&selectedTime=${requestScope.departureTime}">Last</a>
-                            </li>
-                        </c:when>
-                        <c:otherwise>
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Last</a>
-                            </li>
-                        </c:otherwise>
-                    </c:choose>
-           </ul>
+                <%--Last--%>
+                <c:choose>
+                    <c:when test="${requestScope.currentPage<requestScope.countOfPages}">
+                        <li class="page-item">
+                            <a class="page-link" href = "controller?action=allRoutsForAdmin&page=${requestScope.countOfPages}&cityOfDeparture=${requestScope.departureCity}">Last</a>
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Last</a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
+            </ul>
         </nav>
     </main>
     <footer>

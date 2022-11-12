@@ -51,6 +51,7 @@ public class OrderServiceI implements OrderService {
         order.setRoute(selectedRoute);
         order.setUser(user);
         order.setOrderStatus(true);
+        order.setCountOfPurchasedTickets(ticketsCount);
         order.setOrderPrise(orderPrise);
         orderDAO.addOrder(order);
 

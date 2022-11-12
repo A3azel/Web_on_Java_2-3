@@ -15,7 +15,10 @@ import java.io.IOException;
 public class OrderCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        if (request.getSession().getAttribute("username") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
         Long routeID = Long.valueOf(request.getParameter("id"));
 
         RouteService routeService = ServiceFactory.getInstance().getRouteService();

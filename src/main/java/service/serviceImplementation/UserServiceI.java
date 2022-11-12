@@ -4,6 +4,7 @@ import DAO.DAOFactory;
 import DAO.UserDAOImpl;
 import customExceptions.userExeptions.InvalidCountOfMoney;
 import entity.User;
+import security.SecurityHelperMethods;
 import service.serviceInterfaces.UserService;
 import validation.Validator;
 
@@ -34,6 +35,7 @@ public class UserServiceI implements UserService {
         String lastName = user.getLastName();
         String email = user.getUserEmail();
         String password = user.getPassword();
+        String hashPassword = null;
 
         HashMap<String,String> validationErrors = new HashMap<>();
 
@@ -75,14 +77,25 @@ public class UserServiceI implements UserService {
         if (!validationErrors.isEmpty()){
             return validationErrors;
         }
+        try {
+            hashPassword = SecurityHelperMethods.getSaltedHash(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        user.setPassword(hashPassword);
 
         userDAO.addUser(user);
         return validationErrors;
     }
 
     @Override
-    public List<User> findAllUsers() {
-        return userDAO.findAllUsers();
+    public int allUsersCount() {
+        return userDAO.allUsersCount();
+    }
+
+    @Override
+    public List<User> findAllUsers(int offset, int noOfRecords) {
+        return userDAO.findAllUsers(offset, noOfRecords);
     }
 
     @Override
@@ -96,13 +109,18 @@ public class UserServiceI implements UserService {
     }
 
     @Override
+    public String findUserPassword(String username) {
+        return userDAO.findUserPasswordByUsername(username);
+    }
+
+    @Override
     public boolean isEmailExist(String email) {
         return userDAO.isEmailExist(email);
     }
 
     @Override
-    public void setUserAccountVerified(String username) {
-        userDAO.setUserAccountVerified(username);
+    public void setUserAccountVerified(Long id) {
+        userDAO.setUserAccountVerified(id);
 
     }
 
@@ -122,6 +140,15 @@ public class UserServiceI implements UserService {
 
     @Override
     public boolean isUserExist(String username, String password) {
-        return userDAO.isUserExist(username, password);
+        String userPassword = findUserPassword(username);
+        if(userPassword==null){
+            return false;
+        }
+        try {
+            return SecurityHelperMethods.check(password,userPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

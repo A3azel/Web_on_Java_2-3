@@ -35,8 +35,13 @@ public class StationServiceI implements StationService {
     }
 
     @Override
-    public List<Station> findAllStations() {
-        return stationDAO.findAllStations();
+    public List<Station> findAllStations(int offset, int noOfRecords) {
+        return stationDAO.findAllStations(offset, noOfRecords);
+    }
+
+    @Override
+    public int allStationsCount() {
+        return stationDAO.allStationsCount();
     }
 
     @Override

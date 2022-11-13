@@ -22,11 +22,15 @@
     <header>
         <jsp:include page="header.jsp" />
     </header>
-    <form method="get" action="addRoute.jsp">
-        <button type="submit" class="btn btn-outline-danger">Додати</button>
-    </form>
+
 
     <main>
+        <div class="d-grid gap-1 d-md-flex justify-content-md-center" style="margin: 20px">
+            <form method="get" action="addRoute.jsp">
+                <button type="submit" class="btn btn-outline-primary btn-rounded"><i class="bi bi-pencil"></i>Додати</button>
+            </form>
+        </div>
+
         <table class="table table-bordered table-striped text-center" style="margin: 20px">
             <thead class="table-info">
             <tr>
@@ -91,6 +95,8 @@
                     <td>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                             <form method="get" action="controller">
+                                <input type="hidden" name="action" value="updateRoute">
+                                <input type="hidden" name="routeID" value="${route.ID}"/>
                                 <button type="submit" class="btn btn-outline-info">Редагувати</button>
                             </form>
                             <c:choose>
@@ -116,7 +122,7 @@
                                     </form>
                                 </c:otherwise>
                             </c:choose>
-                            <form method="get" action="controller">
+                            <form method="post" action="controller">
                                 <input type="hidden" name="action" value="allRoutsForAdmin">
                                 <input type="hidden" name="requestType" value="delete">
                                 <input type="hidden" name="routeID" value="${route.ID}">

@@ -83,4 +83,9 @@ public class StationServiceI implements StationService {
     public void setStationRelevant(Long id) {
         stationDAO.setStationRelevant(id);
     }
+
+    @Override
+    public void deleteStation(Long id) {
+        stationDAO.deleteStation(id);
+    }
 }

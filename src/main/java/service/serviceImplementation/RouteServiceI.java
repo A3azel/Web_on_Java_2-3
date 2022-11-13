@@ -3,19 +3,14 @@ package service.serviceImplementation;
 import DAO.DAOFactory;
 import DAO.daoRealize.RouteDAOImpl;
 import entity.Route;
-import service.ServiceFactory;
-import service.serviceInterfaces.CityService;
 import service.serviceInterfaces.RouteService;
-import service.serviceInterfaces.StationService;
-import service.serviceInterfaces.TrainService;
 import validation.RouteValidator;
-import validation.Validator;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,46 +32,45 @@ public class RouteServiceI implements RouteService {
 
     @Override
     public Map<String,String> addRoute(String trainNumber, String startCityName, String startStationName, String arrivalCityName
-            , String arrivalStationName, String departureTime, String arrivalTime, String travelTime
+            , String arrivalStationName, String departureTime, String arrivalTime
             , String numberOfFreeSeats, String priseOfTicket) {
 
-        Map<String,String> errorMap = RouteValidator.emptyFieldValidation(trainNumber, startCityName, startStationName, arrivalCityName
-                , arrivalStationName, departureTime, arrivalTime, travelTime
+        Map<String,String> errorMap = RouteValidator.allRoutValidation(trainNumber, startCityName, startStationName, arrivalCityName
+                , arrivalStationName, departureTime, arrivalTime
                 , numberOfFreeSeats, priseOfTicket);
 
         if(!errorMap.isEmpty()){
             return errorMap;
         }
-        LocalDateTime departureLocalDate = LocalDateTime.parse(departureTime);
-        LocalDateTime arrivalLocalDate = LocalDateTime.parse(arrivalTime);
-        int freeSeats = Integer.parseInt(numberOfFreeSeats);
-        BigDecimal ticketPrise = BigDecimal.valueOf(Double.parseDouble(priseOfTicket));
 
-
-        errorMap = RouteValidator.anotherRouteValidation(trainNumber, startCityName, arrivalCityName
-                ,departureLocalDate,arrivalLocalDate);
-        if(!errorMap.isEmpty()){
-            return errorMap;
-        }
-
-        errorMap = RouteValidator.finalRouteValidation(startCityName,arrivalCityName,startStationName,arrivalStationName
-        ,trainNumber, freeSeats);
-        if(!errorMap.isEmpty()){
-            return errorMap;
-        }
-
-        Route route = new Route();
-        route.setTrain(trainNumber);
-        route.setDepartureCity(startCityName);
-        route.setArrivalCity(arrivalCityName);
-        route.setStartStation(startStationName);
-        route.setArrivalStation(arrivalStationName);
-        route.setDepartureTime(departureLocalDate);
-        route.setArrivalTime(arrivalLocalDate);
-        route.setNumberOfFreeSeats(freeSeats);
-        route.setPriseOfTicket(ticketPrise);
-        route.setRelevant(true);
+        Route route = createRoute(trainNumber, startCityName, startStationName, arrivalCityName
+                , arrivalStationName, departureTime, arrivalTime
+                , numberOfFreeSeats, priseOfTicket);
         routeDAO.addRoute(route);
+        return errorMap;
+    }
+
+    @Override
+    public Map<String, String> updateRoute(String id, String trainNumber, String startCityName, String startStationName
+            , String arrivalCityName, String arrivalStationName, String departureTime, String arrivalTime
+            , String numberOfFreeSeats, String priseOfTicket) {
+
+        Map<String,String> errorMap = RouteValidator.allRoutValidation(trainNumber, startCityName, startStationName, arrivalCityName
+                , arrivalStationName, departureTime, arrivalTime
+                , numberOfFreeSeats, priseOfTicket);
+
+        if(!errorMap.isEmpty()){
+            return errorMap;
+        }
+        Route route = createRoute(trainNumber, startCityName, startStationName, arrivalCityName
+                , arrivalStationName, departureTime, arrivalTime
+                , numberOfFreeSeats, priseOfTicket);
+        route.setID(Long.parseLong(id));
+        if(route.equals(findRouteByID(Long.parseLong(id)))){
+            errorMap.put("sameRoutesError","Не було внесено жодних змін");
+            return errorMap;
+        }
+        routeDAO.updateRoute(route);
         return errorMap;
     }
 
@@ -118,5 +112,31 @@ public class RouteServiceI implements RouteService {
     @Override
     public int allBetweenTwoCitesCount(String startCity, String arrivalCity, LocalDate data, LocalTime localTime) {
         return routeDAO.allBetweenTwoCitesCount(startCity, arrivalCity, data, localTime);
+    }
+
+    public Route createRoute(String trainNumber, String startCityName, String startStationName, String arrivalCityName
+            , String arrivalStationName, String departureTime, String arrivalTime
+            , String numberOfFreeSeats, String priseOfTicket){
+
+        LocalDateTime departureLocalDate = LocalDateTime.parse(departureTime);
+        LocalDateTime arrivalLocalDate = LocalDateTime.parse(arrivalTime);
+        int freeSeats = Integer.parseInt(numberOfFreeSeats);
+        BigDecimal ticketPrise = BigDecimal.valueOf(Double.parseDouble(priseOfTicket));
+        Duration duration = Duration.between(departureLocalDate,arrivalLocalDate);
+        LocalTime travelTime = LocalTime.of(duration.toHoursPart(),duration.toMinutesPart());
+
+        Route route = new Route();
+        route.setTrain(trainNumber);
+        route.setDepartureCity(startCityName);
+        route.setArrivalCity(arrivalCityName);
+        route.setStartStation(startStationName);
+        route.setArrivalStation(arrivalStationName);
+        route.setDepartureTime(departureLocalDate);
+        route.setArrivalTime(arrivalLocalDate);
+        route.setTravelTime(travelTime);
+        route.setNumberOfFreeSeats(freeSeats);
+        route.setPriseOfTicket(ticketPrise);
+        route.setRelevant(true);
+        return route;
     }
 }

@@ -70,6 +70,12 @@
                                     </form>
                                 </c:otherwise>
                             </c:choose>
+                            <form method="post" action="controller">
+                                <input type="hidden" name="action" value="allStationsForAdmin">
+                                <input type="hidden" name="requestType" value="delete">
+                                <input type="hidden" name="stationID" value="${station.ID}">
+                                <button type="submit" class="btn btn-outline-danger">Видалити</button>
+                            </form>
                         </div>
                     </td>
                 </tr>

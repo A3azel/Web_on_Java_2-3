@@ -9,8 +9,11 @@ import java.util.Map;
 
 public interface RouteService {
     Map<String,String> addRoute(String trainNumber,String startCityName,String startStationName,String arrivalCityName
-            ,String arrivalStationName,String departureTime,String arrivalTime,String travelTime
-            ,String numberOfCompartmentFreeSeats,String priseOfCompartmentTicket);
+            ,String arrivalStationName,String departureTime,String arrivalTime
+            ,String numberOfFreeSeats,String priseOfTicket);
+    Map<String,String> updateRoute(String id,String trainNumber,String startCityName,String startStationName,String arrivalCityName
+            ,String arrivalStationName,String departureTime,String arrivalTime
+            ,String numberOfFreeSeats,String priseOfTicket);
     List<Route> findAllRouts(int offset, int noOfRecords);
     int allRoutsCount();
     Route findRouteByID(Long id);

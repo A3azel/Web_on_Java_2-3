@@ -93,17 +93,21 @@
                                 </p>
                             </div>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0">Баланс рахунку</p>
-                            </div>
-                            <div class="col-sm-9">
-                                <p class="text-muted mb-0">
-                                    ${sessionScope.user.userCountOfMoney} ₴
-                                </p>
-                            </div>
-                        </div>
+                        <c:choose>
+                            <c:when test="${sessionScope.user.userRole.equals('USER')}">
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Баланс рахунку</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">
+                                                ${sessionScope.user.userCountOfMoney} ₴
+                                        </p>
+                                    </div>
+                                </div>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </div>
                 <c:choose>

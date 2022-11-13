@@ -1,7 +1,10 @@
 package command.customeCommand.adminCommand;
 
 import command.Command;
+import entity.Route;
+import entity.User;
 import service.ServiceFactory;
+import service.serviceInterfaces.OrderService;
 import service.serviceInterfaces.RouteService;
 
 import javax.servlet.ServletException;
@@ -11,9 +14,35 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddRouteCommand implements Command {
+public class UpdateRouteCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user==null || !user.getUserRole().equals("ADMIN")){
+            request.getRequestDispatcher("login.jsp").forward(request,response);
+            return;
+        }
+        String routeID = request.getParameter("routeID");
+        RouteService routeService = ServiceFactory.getInstance().getRouteService();
+        if(request.getParameter("created")==null){
+            Route route = routeService.findRouteByID(Long.parseLong(routeID));
+            request.setAttribute("routeID",routeID);
+            request.setAttribute("created",route.getCreateTime());
+            request.setAttribute("updated",route.getUpdateTime());
+            request.setAttribute("trainNumber",route.getTrain());
+            request.setAttribute("startCityName",route.getDepartureCity());
+            request.setAttribute("startStationName",route.getStartStation());
+            request.setAttribute("arrivalCityName",route.getArrivalCity());
+            request.setAttribute("arrivalStationName",route.getArrivalStation());
+            request.setAttribute("departureTime",route.getDepartureTime());
+            request.setAttribute("arrivalTime",route.getArrivalTime());
+            request.setAttribute("numberOfFreeSeats",route.getNumberOfFreeSeats());
+            request.setAttribute("priseOfTicket",route.getPriseOfTicket());
+            request.getRequestDispatcher("updateRoute.jsp").forward(request,response);
+            return;
+        }
+        String created = request.getParameter("created");
+        String updated = request.getParameter("updated");
         String trainNumber = request.getParameter("trainNumber").trim();
         String startCityName = request.getParameter("startCityName").trim();
         String startStationName = request.getParameter("startStationName").trim();
@@ -24,11 +53,14 @@ public class AddRouteCommand implements Command {
         String numberOfFreeSeats = request.getParameter("numberOfFreeSeats").trim();
         String priseOfTicket = request.getParameter("priseOfTicket").trim();
 
-        RouteService routeService = ServiceFactory.getInstance().getRouteService();
-        Map<String,String> errorMap = routeService.addRoute(trainNumber,startCityName,startStationName,arrivalCityName,arrivalStationName,departureTime
+
+        Map<String,String> errorMap = routeService.updateRoute(routeID,trainNumber,startCityName,startStationName,arrivalCityName,arrivalStationName,departureTime
                 ,arrivalTime,numberOfFreeSeats,priseOfTicket);
 
         if(!errorMap.isEmpty()){
+            request.setAttribute("routeID",routeID);
+            request.setAttribute("created",created);
+            request.setAttribute("updated",updated);
             request.setAttribute("trainNumber",trainNumber);
             request.setAttribute("startCityName",startCityName);
             request.setAttribute("startStationName",startStationName);
@@ -47,7 +79,7 @@ public class AddRouteCommand implements Command {
             request.setAttribute(ent.getKey(), ent.getValue());
         }
         try {
-            request.getRequestDispatcher("addRoute.jsp").forward(request,response);
+            request.getRequestDispatcher("updateRoute.jsp").forward(request,response);
         } catch (IOException | ServletException e) {
             e.printStackTrace();
         }

@@ -38,7 +38,14 @@ public class AllStationsCommand implements Command {
 
         if(request.getParameter("stationID")!=null){
             long stationID = Long.parseLong(request.getParameter("stationID"));
-            stationService.setStationRelevant(stationID);
+            switch (request.getParameter("requestType")){
+                case "setStatus":
+                    stationService.setStationRelevant(stationID);
+                    break;
+                case "delete":
+                    stationService.deleteStation(stationID);
+                    break;
+            }
             response.sendRedirect("controller?action=allStationsForAdmin&cityName=" + URLEncoder.encode(cityName, StandardCharsets.UTF_8));
             return;
         }

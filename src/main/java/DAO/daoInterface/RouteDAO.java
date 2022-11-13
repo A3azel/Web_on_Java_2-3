@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface RouteDAO {
     void addRoute(Route route);
+    void updateRoute(Route route);
     List<Route> findAllRouts(int offset, int noOfRecords);
     int allRoutsCount();
     Route findRouteByID(Long id);

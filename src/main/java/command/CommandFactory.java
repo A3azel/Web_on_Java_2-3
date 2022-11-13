@@ -41,6 +41,8 @@ public class CommandFactory {
         commands.put("addStation",new AddStationCommand());
         commands.put("addCity",new AddCityCommand());
         commands.put("addRoute",new AddRouteCommand());
+        commands.put("userInfo",new UserInfoCommand());
+        commands.put("updateRoute",new UpdateRouteCommand());
     }
 
     public Command getCommand(String commandName) {

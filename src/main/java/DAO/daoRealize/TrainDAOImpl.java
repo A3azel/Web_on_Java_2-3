@@ -160,7 +160,7 @@ public class TrainDAOImpl extends AbstractDAO implements TrainDAO {
             DAOHelperMethods.closeCon(preparedStatement);
             DAOHelperMethods.closeCon(con);
         }
-        return new Train();
+        return null;
     }
 
     @Override

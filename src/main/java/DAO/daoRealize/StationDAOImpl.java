@@ -32,6 +32,7 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
     private static final String FIND_ALL_STATION = "SELECT * FROM station where city_id = ? limit ?,?";
     private static final String FIND_ALL_STATION_COUNT = "SELECT COUNT(id) AS k FROM station where city_id = ?";
     private static final String FIND_STATION_BY_CITY_ID_AND_STATION_NAME = "SELECT * FROM station WHERE station_name = ? AND city_id = ?";
+    private static final String DELETE_STATION_BY_ID = "DELETE FROM station WHERE id = ?";
 
     private static StationDAOImpl stationDAO;
 
@@ -150,8 +151,8 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_STATION_BY_CITY_ID_AND_STATION_NAME);
-            preparedStatement.setLong(1,cityID);
-            preparedStatement.setString(2,stationName);
+            preparedStatement.setString(1,stationName);
+            preparedStatement.setLong(2,cityID);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()){
                 return true;
@@ -274,6 +275,30 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             preparedStatement.setLong(2,id);
             preparedStatement.executeUpdate();
             con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+    }
+
+    @Override
+    public void deleteStation(Long id) {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            preparedStatement = con.prepareStatement(DELETE_STATION_BY_ID);
+            preparedStatement.setLong(1,id);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             DAOHelperMethods.rollback(con);

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class RouteValidator {
     public static Map<String,String> emptyFieldValidation(String trainNumber, String startCityName, String startStationName, String arrivalCityName
-            , String arrivalStationName, String departureTime, String arrivalTime, String travelTime
+            , String arrivalStationName, String departureTime, String arrivalTime
             , String numberOfFreeSeats, String priseOfTicket){
         Map<String,String> errorMap = new HashMap<>();
 
@@ -38,9 +38,6 @@ public class RouteValidator {
         }
         if(arrivalTime.equals("")){
             errorMap.put("arrivalTimeError", "Данне поле не може бути пустим");
-        }
-        if(travelTime.equals("")){
-            errorMap.put("travelTimeError", "Данне поле не може бути пустим");
         }
         return errorMap;
     }
@@ -87,6 +84,34 @@ public class RouteValidator {
         }
         if(trainService.findTrainByTrainNumber(trainNumber).getNumberOfSeats()<numberOfFreeSeats){
             errorMap.put("freeSeatsError","Недостатньо місць, кількість доступних місць у потязі " +trainNumber+ ": " + trainService.findTrainByTrainNumber(trainNumber).getNumberOfSeats());
+        }
+        return errorMap;
+    }
+
+    public static Map<String,String> allRoutValidation(String trainNumber, String startCityName, String startStationName, String arrivalCityName
+            , String arrivalStationName, String departureTime, String arrivalTime
+            , String numberOfFreeSeats, String priseOfTicket){
+        Map<String,String> errorMap = emptyFieldValidation(trainNumber, startCityName, startStationName, arrivalCityName
+                , arrivalStationName, departureTime, arrivalTime
+                , numberOfFreeSeats, priseOfTicket);
+
+        if(!errorMap.isEmpty()){
+            return errorMap;
+        }
+        LocalDateTime departureLocalDate = LocalDateTime.parse(departureTime);
+        LocalDateTime arrivalLocalDate = LocalDateTime.parse(arrivalTime);
+        int freeSeats = Integer.parseInt(numberOfFreeSeats);
+
+        errorMap = anotherRouteValidation(trainNumber, startCityName, arrivalCityName
+                ,departureLocalDate,arrivalLocalDate);
+        if(!errorMap.isEmpty()){
+            return errorMap;
+        }
+
+        errorMap = finalRouteValidation(startCityName,arrivalCityName,startStationName,arrivalStationName
+                ,trainNumber, freeSeats);
+        if(!errorMap.isEmpty()){
+            return errorMap;
         }
         return errorMap;
     }

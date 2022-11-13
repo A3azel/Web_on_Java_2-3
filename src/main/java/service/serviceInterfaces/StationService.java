@@ -14,4 +14,5 @@ public interface StationService {
     Station findStationByStationName(String stationName);
     Station findStationByID(Long id);
     void setStationRelevant(Long id);
+    void deleteStation(Long id);
 }

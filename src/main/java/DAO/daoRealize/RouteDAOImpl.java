@@ -39,6 +39,9 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     // SQL requests
     private static final String ADD_ROUTE = "INSERT INTO route(create_time, update_time, departure_city_id,arrival_city_id, start_station_id, departure_time, travel_time" +
             ", arrival_station_id, arrival_time, train_id, number_of_free_seats, prise_of_ticket, relevant) VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String UPDATE_ROUTE = "UPDATE route SET update_time = ?, departure_city_id = ?,arrival_city_id = ?, start_station_id = ?" +
+            ", departure_time = ?, travel_time = ?, arrival_station_id = ?, arrival_time = ?, train_id = ?" +
+            ", number_of_free_seats = ?, prise_of_ticket = ?, relevant = ? WHERE id = ?";
     private static final String SET_ROUTE_RELEVANT = "UPDATE route SET relevant = ? WHERE id = ?";
     private static final String FIND_ROUTE_BETWEEN_TWO_STATIONS = "SELECT * FROM route WHERE start_station_id = ? AND arrival_station_id = ? AND departure_time BETWEEN ? and ?";
     private static final String FIND_ROUTE_BETWEEN_TWO_CITES = "SELECT * FROM route as R\n" +
@@ -98,6 +101,53 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             preparedStatement.setInt(11,route.getNumberOfFreeSeats());
             preparedStatement.setBigDecimal(12,route.getPriseOfTicket());
             preparedStatement.setBoolean(13,true);
+            preparedStatement.executeUpdate();
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+    }
+
+    @Override
+    public void updateRoute(Route route) {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            preparedStatement = con.prepareStatement(UPDATE_ROUTE);
+            Calendar calendar = Calendar.getInstance();
+            StationDAO stationDAO = DAOFactory.getInstance().getStationDAO();
+            CityDAO cityDAO = DAOFactory.getInstance().getCityDAO();
+            TrainDAO trainDAO = DAOFactory.getInstance().getTrainDAO();
+            Long startStationID = stationDAO.findStationByStationName(route.getStartStation()).getID();
+            Long arrivalStationID = stationDAO.findStationByStationName(route.getArrivalStation()).getID();
+            Long departureCityID = cityDAO.findCityByCityName(route.getDepartureCity()).getID();
+            Long arrivalCityID = cityDAO.findCityByCityName(route.getArrivalCity()).getID();
+            Long trainID = trainDAO.findTrainByTrainNumber(route.getTrain()).getID();
+            java.sql.Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
+            preparedStatement.setTimestamp(1,timestamp);
+            preparedStatement.setLong(2,departureCityID);
+            preparedStatement.setLong(3,arrivalCityID);
+            preparedStatement.setLong(4,startStationID);
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(route.getDepartureTime()));
+            preparedStatement.setTime(6, Time.valueOf(route.getTravelTime()));
+            preparedStatement.setLong(7,arrivalStationID);
+            preparedStatement.setTimestamp(8, Timestamp.valueOf(route.getArrivalTime()));
+            preparedStatement.setLong(9,trainID);
+            preparedStatement.setInt(10,route.getNumberOfFreeSeats());
+            preparedStatement.setBigDecimal(11,route.getPriseOfTicket());
+            preparedStatement.setBoolean(12,true);
+            preparedStatement.setLong(13,route.getID());
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {

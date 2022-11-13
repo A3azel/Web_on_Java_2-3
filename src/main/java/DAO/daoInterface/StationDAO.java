@@ -7,10 +7,11 @@ import java.util.List;
 public interface StationDAO {
     void addStation(Station station);
     void updateStation(Station station);
-    List<Station> findAllStations(int offset, int noOfRecords);
-    int allStationsCount();
+    List<Station> findAllStations(String cityName, int offset, int noOfRecords);
+    boolean findStationByCityIDAndStationName(Long cityID, String stationName);
+    int allStationsCount(String cityName);
     Station findStationByStationName(String stationName);
     Station findStationByID(Long id);
-    void setStationRelevant(String stationName);
+    void setStationRelevant(Long id);
 
 }

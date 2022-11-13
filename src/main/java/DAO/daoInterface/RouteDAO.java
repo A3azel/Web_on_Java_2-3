@@ -12,6 +12,7 @@ public interface RouteDAO {
     int allRoutsCount();
     Route findRouteByID(Long id);
     void setRouteRelevant(Long id);
+    void deleteRouteByID(Long id);
     List<Route> findAllBetweenTwoStations(String startStation, String arrivalStation, LocalDate data, LocalTime localTime);
     List<Route> findAllBetweenTwoCites(String startCity, String arrivalCity, LocalDate data, LocalTime localTime, int offset, int noOfRecords);
     int allBetweenTwoCitesCount(String startCity, String arrivalCity, LocalDate data, LocalTime localTime);

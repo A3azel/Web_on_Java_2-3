@@ -34,8 +34,13 @@ public class CityServiceI implements CityService {
     }
 
     @Override
-    public List<City> findAllCites() {
-        return cityDAO.findAllCites();
+    public List<City> findAllCites(int offset, int noOfRecords) {
+        return cityDAO.findAllCites(offset, noOfRecords);
+    }
+
+    @Override
+    public int allCitesCount() {
+        return cityDAO.allCitesCount();
     }
 
     @Override
@@ -49,14 +54,14 @@ public class CityServiceI implements CityService {
     }
 
     @Override
-    public void setCityRelevant(String cityName) {
-        cityDAO.setCityRelevant(cityName);
+    public void setCityRelevant(Long id) {
+        cityDAO.setCityRelevant(id);
 
     }
 
     @Override
-    public void deleteCityByCityName(String cityName) {
-        cityDAO.deleteCityByCityName(cityName);
+    public void deleteCityByID(Long id) {
+        cityDAO.deleteCityByID(id);
 
     }
 }

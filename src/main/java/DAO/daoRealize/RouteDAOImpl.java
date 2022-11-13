@@ -52,6 +52,7 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
     private static final String FIND_ROUTE_BY_ID = "SELECT * FROM route WHERE id = ?";
     private static final String FIND_ALL_ROUTES = "SELECT * FROM route limit ?,?";
     private static final String FIND_ALL_ROUTES_COUNT = "SELECT COUNT(id) AS k FROM route";
+    private static final String DELETE_ROUTE_DY_ID = "DELETE FROM route WHERE id = ?";
 
     private static RouteDAOImpl routeDAO;
 
@@ -211,6 +212,32 @@ public class RouteDAOImpl extends AbstractDAO implements RouteDAO {
             preparedStatement = con.prepareStatement(SET_ROUTE_RELEVANT);
             boolean relevant = findRouteByID(id).isRelevant();
             preparedStatement.setBoolean(1,!relevant);
+            preparedStatement.setLong(2,id);
+            preparedStatement.executeUpdate();
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+    }
+
+    @Override
+    public void deleteRouteByID(Long id) {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            preparedStatement = con.prepareStatement(DELETE_ROUTE_DY_ID);
+            preparedStatement.setLong(1,id);
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {

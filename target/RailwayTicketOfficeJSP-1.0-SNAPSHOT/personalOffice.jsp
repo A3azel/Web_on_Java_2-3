@@ -115,14 +115,15 @@
                     <c:otherwise>
                         <form action="controller" method="get">
                             <input type="hidden" name="action" value="allUsers">
-                            <button name="userIDPost" class="btn btn-outline-primary" type="submit" >Список користувачів</button>
+                            <button class="btn btn-outline-primary" type="submit" >Список користувачів</button>
                         </form>
-                        <form action="#" method="get">
-                            <button name="upgradeUser" class="btn btn-outline-primary" type="submit">Список потягів</button>
+                        <form action="controller" method="get">
+                            <input type="hidden" name="action" value="allCitiesForAdmin">
+                            <button class="btn btn-outline-primary" type="submit">Список міст</button>
                         </form>
                         <form action="controller" method="get">
                             <input type="hidden" name="action" value="allRoutsForAdmin">
-                            <button name="userIDPost" class="btn btn-outline-primary" type="submit" >Список маршрутів</button>
+                            <button class="btn btn-outline-primary" type="submit" >Список маршрутів</button>
                         </form>
                     </c:otherwise>
                 </c:choose>

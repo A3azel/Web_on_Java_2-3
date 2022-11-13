@@ -1,9 +1,7 @@
 package command;
 
 import command.customeCommand.*;
-import command.customeCommand.adminCommand.AllRoutsCommand;
-import command.customeCommand.adminCommand.AllStationsCommand;
-import command.customeCommand.adminCommand.AllUsersCommand;
+import command.customeCommand.adminCommand.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +35,12 @@ public class CommandFactory {
         commands.put("userPurchasedTickets",new UserPurchasedTicketsCommand());
         commands.put("purchasedTicket",new OrderInfoCommand());
         commands.put("allUsers",new AllUsersCommand());
-        commands.put("allStationForAdmin",new AllStationsCommand());
+        commands.put("allStationsForAdmin",new AllStationsCommand());
         commands.put("allRoutsForAdmin",new AllRoutsCommand());
+        commands.put("allCitiesForAdmin",new AllCitiesCommand());
+        commands.put("addStation",new AddStationCommand());
+        commands.put("addCity",new AddCityCommand());
+        commands.put("addRoute",new AddRouteCommand());
     }
 
     public Command getCommand(String commandName) {

@@ -22,11 +22,12 @@ public class CityDAOImpl extends AbstractDAO implements CityDAO {
     // SQL requests
     private static final String ADD_CITY = "INSERT INTO cities(create_time,update_time,city_name,relevant) VALUE(?,?,?,?)";
     private static final String UPDATE_CITY = "UPDATE cities SET update_time= ?, city_name = ?,relevant = ? WHERE id = ?";
-    private static final String SET_CITY_RELEVANT = "UPDATE cities SET relevant = ? WHERE city_name = ?";
+    private static final String SET_CITY_RELEVANT = "UPDATE cities SET relevant = ? WHERE id = ?";
     private static final String FIND_CITY = "SELECT * FROM cities WHERE city_name = ?";
-    private static final String DELETE_CITY = "DELETE FROM cities WHERE city_name = ?";
+    private static final String DELETE_CITY = "DELETE FROM cities WHERE id = ?";
     private static final String FIND_CITY_BY_ID = "SELECT * FROM cities WHERE id = ?";
-    private static final String FIND_ALL_CITES = "SELECT * FROM cities";
+    private static final String FIND_ALL_CITES = "SELECT * FROM cities limit ?,?";
+    private static final String FIND_ALL_CITES_COUNT = "SELECT COUNT(id) AS k FROM cities";
 
     private static CityDAOImpl cityDAO;
 
@@ -105,7 +106,7 @@ public class CityDAOImpl extends AbstractDAO implements CityDAO {
     }
 
     @Override
-    public List<City> findAllCites(){
+    public List<City> findAllCites(int offset, int noOfRecords){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         List<City> cityList = new ArrayList<>();
@@ -113,6 +114,8 @@ public class CityDAOImpl extends AbstractDAO implements CityDAO {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement = con.prepareStatement(FIND_ALL_CITES);
+            preparedStatement.setInt(1,offset);
+            preparedStatement.setInt(2,noOfRecords);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 cityList.add(helpToBuildCity(rs));
@@ -131,6 +134,34 @@ public class CityDAOImpl extends AbstractDAO implements CityDAO {
             DAOHelperMethods.closeCon(con);
         }
         return cityList;
+    }
+
+    @Override
+    public int allCitesCount() {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            preparedStatement = con.prepareStatement(FIND_ALL_CITES_COUNT);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                return rs.getInt("k");
+            }
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+        return 0;
     }
 
     @Override
@@ -197,20 +228,20 @@ public class CityDAOImpl extends AbstractDAO implements CityDAO {
     }
 
     @Override
-    public void setCityRelevant(String cityName){
+    public void setCityRelevant(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(SET_CITY_RELEVANT);
-            if(findCityByCityName(cityName)==null){
+            if(findCityByID(id)==null){
                 System.out.println("city with selected name not found");
                 return;
             }
-            boolean relevant = findCityByCityName(cityName).isRelevant();
+            boolean relevant = findCityByID(id).isRelevant();
             preparedStatement.setBoolean(1,!relevant);
-            preparedStatement.setString(2,cityName);
+            preparedStatement.setLong(2,id);
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -228,18 +259,18 @@ public class CityDAOImpl extends AbstractDAO implements CityDAO {
     }
 
     @Override
-    public void deleteCityByCityName(String cityName){
+    public void deleteCityByID(Long id){
         Connection con = getConnection();
         PreparedStatement preparedStatement = null;
         try {
             con.setAutoCommit(false);
-            if(findCityByCityName(cityName)==null){
+            if(findCityByID(id)==null){
                 System.out.println("city with selected name not found");
                 return;
             }
             con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = con.prepareStatement(DELETE_CITY);
-            preparedStatement.setString(1,cityName);
+            preparedStatement.setLong(1,id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

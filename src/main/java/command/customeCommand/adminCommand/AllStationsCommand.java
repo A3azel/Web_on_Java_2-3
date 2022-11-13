@@ -10,6 +10,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class AllStationsCommand implements Command {
@@ -27,9 +29,25 @@ public class AllStationsCommand implements Command {
         if(request.getParameter("page") != null){
             page = Integer.parseInt(request.getParameter("page"));
         }
-        List<Station> userList = stationService.findAllStations((page-1)*RECORDS_PER_PAGE, RECORDS_PER_PAGE);
+        String cityName = request.getParameter("cityName");
 
-        int noOfRecords = stationService.allStationsCount();
+        List<Station> stationList = stationService.findAllStations(cityName,(page-1)*RECORDS_PER_PAGE, RECORDS_PER_PAGE);
+
+        int noOfRecords = stationService.allStationsCount(cityName);
         int countOfPages = (int) Math.ceil(noOfRecords * 1.0 / RECORDS_PER_PAGE);
+
+        if(request.getParameter("stationID")!=null){
+            long stationID = Long.parseLong(request.getParameter("stationID"));
+            stationService.setStationRelevant(stationID);
+            response.sendRedirect("controller?action=allStationsForAdmin&cityName=" + URLEncoder.encode(cityName, StandardCharsets.UTF_8));
+            return;
+        }
+
+        request.setAttribute("countOfPages", countOfPages);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("stationsListForAdmin",stationList);
+        request.setAttribute("cityName",cityName);
+
+        request.getRequestDispatcher("allStationsForAdmin.jsp").forward(request,response);
     }
 }

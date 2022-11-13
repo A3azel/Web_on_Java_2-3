@@ -32,6 +32,20 @@ public class AllRoutsCommand implements Command {
         int noOfRecords = routeService.allRoutsCount();
         int countOfPages = (int) Math.ceil(noOfRecords * 1.0 / RECORDS_PER_PAGE);
 
+        if(request.getParameter("routeID")!=null){
+            long routeID = Long.parseLong(request.getParameter("routeID"));
+            switch (request.getParameter("requestType")){
+                case "setStatus":
+                    routeService.setRouteRelevant(routeID);
+                    break;
+                case "delete":
+                    routeService.deleteRoute(routeID);
+                    break;
+            }
+            response.sendRedirect("controller?action=allRoutsForAdmin");
+            return;
+        }
+
         request.setAttribute("countOfPages", countOfPages);
         request.setAttribute("currentPage", page);
         request.setAttribute("routeListForAdmin",routeListForAdmin);

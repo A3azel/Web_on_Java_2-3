@@ -46,11 +46,9 @@ public class UserServiceI implements UserService {
             validationErrors.put("lastNameError","Last name is invalid");
         }
         if(!Validator.isUsernameValid(username)){
-            System.out.println(username);
             validationErrors.put("usernameError","Username is invalid");
         }
         if(!Validator.isEmailValid(email)){
-            System.out.println(email);
             validationErrors.put("emailError","Email is invalid");
         }
         if(!Validator.isPasswordValid(password)){

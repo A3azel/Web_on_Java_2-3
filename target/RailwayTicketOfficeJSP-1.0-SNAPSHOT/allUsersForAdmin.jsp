@@ -55,6 +55,8 @@
                     <td>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                             <form method="get" action="controller">
+                                <input type="hidden" name="action" value="userInfo">
+                                <input type="hidden" name="userID" value="${user.ID}">
                                 <button type="submit" class="btn btn-outline-info">Детальні інформація</button>
                             </form>
                             <c:choose>

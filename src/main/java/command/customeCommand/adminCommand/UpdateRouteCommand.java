@@ -4,17 +4,18 @@ import command.Command;
 import entity.Route;
 import entity.User;
 import service.ServiceFactory;
-import service.serviceInterfaces.OrderService;
 import service.serviceInterfaces.RouteService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateRouteCommand implements Command {
+    private static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
@@ -25,10 +26,12 @@ public class UpdateRouteCommand implements Command {
         String routeID = request.getParameter("routeID");
         RouteService routeService = ServiceFactory.getInstance().getRouteService();
         if(request.getParameter("created")==null){
+
             Route route = routeService.findRouteByID(Long.parseLong(routeID));
             request.setAttribute("routeID",routeID);
-            request.setAttribute("created",route.getCreateTime());
-            request.setAttribute("updated",route.getUpdateTime());
+            request.setAttribute("created",route.getCreateTime().format(DateTimeFormatter.ofPattern(PATTERN)));
+            request.setAttribute("updated",route.getUpdateTime().format(DateTimeFormatter.ofPattern(PATTERN)));
+            request.setAttribute("routeID",routeID);
             request.setAttribute("trainNumber",route.getTrain());
             request.setAttribute("startCityName",route.getDepartureCity());
             request.setAttribute("startStationName",route.getStartStation());
@@ -60,7 +63,7 @@ public class UpdateRouteCommand implements Command {
         if(!errorMap.isEmpty()){
             request.setAttribute("routeID",routeID);
             request.setAttribute("created",created);
-            request.setAttribute("updated",updated);
+            request.setAttribute("updated",updated );
             request.setAttribute("trainNumber",trainNumber);
             request.setAttribute("startCityName",startCityName);
             request.setAttribute("startStationName",startStationName);

@@ -36,11 +36,15 @@
                                 </form>
                             </c:when>
                             <c:otherwise>
-                                <form method="get" action="personalOffice.jsp">
-                                    <button class="btn btn-outline-warning" type="submit">
-                                        Баланс <br> ${sessionScope.user.userCountOfMoney} ₴
-                                    </button>
-                                </form>
+                                <c:choose>
+                                    <c:when test="${sessionScope.user.userRole.equals('USER')}">
+                                        <form method="get" action="personalOffice.jsp">
+                                            <button class="btn btn-outline-warning" type="submit">
+                                                Баланс <br> ${sessionScope.user.userCountOfMoney} ₴
+                                            </button>
+                                        </form>
+                                    </c:when>
+                                </c:choose>
                                 <form method="post" action="controller">
                                     <input type="hidden" name="action" value="logout">
                                     <button class="btn btn-outline-primary" type="submit">Вихід</button>

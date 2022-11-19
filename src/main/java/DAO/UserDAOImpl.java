@@ -27,7 +27,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
     // SQL requests
     private static final String ADD_USER = "INSERT INTO user_info(create_time, update_time, username, first_name, last_name, user_password" +
-            ", user_count_of_money, account_verified, user_email, role_id) VALUE(?,?,?,?,?,?,?,?,?,?)";
+            ", account_verified, user_email, role_id) VALUE(?,?,?,?,?,?,?,?,?)";
     private static final String SET_USER_ACCOUNT_VERIFIED = "UPDATE user_info SET account_verified = ? WHERE id = ?";
     private static final String FIND_USER_PASSWORD = "SELECT user_password FROM user_info WHERE username = ?";
     private static final String FIND_USER = "SELECT * FROM user_info WHERE username = ?";
@@ -73,10 +73,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             preparedStatement.setString(4, user.getFirstName());
             preparedStatement.setString(5, user.getLastName());
             preparedStatement.setString(6, user.getPassword());
-            preparedStatement.setBigDecimal(7, user.getUserCountOfMoney());
-            preparedStatement.setBoolean(8, user.isAccountVerified());
-            preparedStatement.setString(9, user.getUserEmail());
-            preparedStatement.setInt(10, Integer.parseInt(roleDAO.findIDByUserRole(user.getUserRole())));
+            preparedStatement.setBoolean(7, user.isAccountVerified());
+            preparedStatement.setString(8, user.getUserEmail());
+            preparedStatement.setInt(9, Integer.parseInt(roleDAO.findIDByUserRole(user.getUserRole())));
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {

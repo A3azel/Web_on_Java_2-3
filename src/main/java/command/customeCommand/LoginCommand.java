@@ -29,7 +29,7 @@ public class LoginCommand implements Command {
         Map<String,String> errorAttribute = new HashMap<>();
 
         if (!isUserExist){
-            errorAttribute.put("loginError","incorrect password or login");
+            errorAttribute.put("loginError","Невірний логін або пароль");
             passToErrorPage(request,response,errorAttribute);
             return;
         }
@@ -37,7 +37,7 @@ public class LoginCommand implements Command {
         boolean isAccountVerified = userService.findUserByUsername(username).isAccountVerified();
 
         if (!isAccountVerified){
-            errorAttribute.put("loginError","account wab blocked");
+            errorAttribute.put("loginError","Аккаунт був заблокований");
             passToErrorPage(request,response,errorAttribute);
             return;
         }

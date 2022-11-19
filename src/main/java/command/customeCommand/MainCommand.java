@@ -39,10 +39,10 @@ public class MainCommand implements Command {
         LocalDateTime selectedLocalDateTime = LocalDateTime.of(departureData,departureTime);
 
         if(departureCity.equals("")){
-            errorAttribute.put("departureCityError","this field cant be empty");
+            errorAttribute.put("departureCityError","Дане поле не може бути пустим");
         }
         if(arrivalCity.equals("")){
-            errorAttribute.put("arrivalCityError","this field cant be empty");
+            errorAttribute.put("arrivalCityError","Дане поле не може бути пустим");
         }
         if(!errorAttribute.isEmpty()){
             passToErrorPage(request,response,errorAttribute);
@@ -50,13 +50,13 @@ public class MainCommand implements Command {
         }
 
         if(selectedLocalDateTime.isBefore(LocalDateTime.now())){
-            errorAttribute.put("routeErrors","the date has already passed");
+            errorAttribute.put("routeErrors","Вбрана дата вже пройшла");
         }
         if(cityService.findCityByCityName(departureCity) == null){
-            errorAttribute.put("departureCityError","City with the specified name not found");
+            errorAttribute.put("departureCityError","Місто не знайдене");
         }
         if(cityService.findCityByCityName(arrivalCity) == null){
-            errorAttribute.put("arrivalCityError","City with the specified name not found");
+            errorAttribute.put("arrivalCityError","Місто не знайдене");
         }
 
         if(!errorAttribute.isEmpty()){
@@ -69,7 +69,7 @@ public class MainCommand implements Command {
         }
         List<Route> routeList = routeService.findAllBetweenTwoCites(departureCity,arrivalCity,departureData,departureTime,(page-1)*RECORDS_PER_PAGE, RECORDS_PER_PAGE);
         if(routeList.size()==0){
-            errorAttribute.put("routeErrors","Route not found");
+            errorAttribute.put("routeErrors","Маршрут не знайдено");
         }
         if(!errorAttribute.isEmpty()){
             passToErrorPage(request,response,errorAttribute);

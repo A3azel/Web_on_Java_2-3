@@ -11,6 +11,8 @@ public class Validator {
     private static final String USERNAME_REGEX = "\\w{4,64}";
     private static final String EMAIL_REGEX = "^([A-Za-z0-9_-]+\\.)*[A-Za-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
     private static final String MONEY_REGEX = "\\d{1,6}[.,]\\d{0,2}";
+    private static final String CITY_REGEX = "[A-Za-zА-Яа-яёЁЇїІіЄєҐґ\\-]{2,32}";
+    private static final String STATION_REGEX = "[\\wА-Яа-яёЁЇїІіЄєҐґ\\-]{2,32}";
 
     public static boolean isUserExist(String username){
         UserService userService = ServiceFactory.getInstance().getUserService();
@@ -44,6 +46,14 @@ public class Validator {
 
     public static boolean isCountOfMoneyValid(String money){
         return Pattern.matches(MONEY_REGEX,money.trim());
+    }
+
+    public static boolean isCityValid(String cityName){
+        return Pattern.matches(CITY_REGEX,cityName);
+    }
+
+    public static boolean isStationValid(String stationName){
+        return Pattern.matches(STATION_REGEX,stationName);
     }
 
 }

@@ -26,7 +26,6 @@ public class UpdateRouteCommand implements Command {
         String routeID = request.getParameter("routeID");
         RouteService routeService = ServiceFactory.getInstance().getRouteService();
         if(request.getParameter("created")==null){
-
             Route route = routeService.findRouteByID(Long.parseLong(routeID));
             request.setAttribute("routeID",routeID);
             request.setAttribute("created",route.getCreateTime().format(DateTimeFormatter.ofPattern(PATTERN)));
@@ -77,7 +76,7 @@ public class UpdateRouteCommand implements Command {
         response.sendRedirect("controller?action=allRoutsForAdmin&page=1");
     }
 
-    public void passToErrorPage(HttpServletRequest request, HttpServletResponse response, Map<String,String> errorMap){
+    private void passToErrorPage(HttpServletRequest request, HttpServletResponse response, Map<String,String> errorMap){
         for (HashMap.Entry<String, String> ent : errorMap.entrySet()){
             request.setAttribute(ent.getKey(), ent.getValue());
         }

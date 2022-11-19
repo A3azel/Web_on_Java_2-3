@@ -3,9 +3,10 @@ package service.serviceInterfaces;
 import entity.City;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CityService {
-    void addCity(City city);
+    Map<String,String> addCity(String cityName);
     void updateCity(City city);
     List<City> findAllCites(int offset, int noOfRecords);
     int allCitesCount();

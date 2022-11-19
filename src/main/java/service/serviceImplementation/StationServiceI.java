@@ -6,6 +6,7 @@ import entity.Station;
 import service.ServiceFactory;
 import service.serviceInterfaces.CityService;
 import service.serviceInterfaces.StationService;
+import validation.Validator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ public class StationServiceI implements StationService {
         }
 
         if(findStationByCityIDAndStationName(cityID, stationName)){
-            errorMap.put("addingStationError","Станція з заданим ім'ям вже існує");
+            errorMap.put("addingStationError","Станцію вже додано в базу");
         }
         if(!errorMap.isEmpty()){
             return errorMap;
@@ -50,13 +51,34 @@ public class StationServiceI implements StationService {
     }
 
     @Override
-    public void updateStation(Station station) {
+    public Map<String,String> updateStation(String stationName, Long stationID) {
+        Map<String,String> errorMap = new HashMap<>();
+        Station station = findStationByID(stationID);
+        if(!Validator.isStationValid(stationName)){
+            errorMap.put("stationError","Ім'я не можк бути пустим");
+            return errorMap;
+        }
+        if(station.getStationName().equals(stationName)){
+            errorMap.put("stationError","Немає змін з попереднім варіантом");
+            return errorMap;
+        }
+        if(findStationByCityIDAndStationName(station.getCity().getID(),stationName)){
+            errorMap.put("stationError","Станція вже існує в базі");
+            return errorMap;
+        }
+        station.setStationName(stationName);
         stationDAO.updateStation(station);
+        return errorMap;
     }
 
     @Override
     public List<Station> findAllStations(String cityName, int offset, int noOfRecords) {
         return stationDAO.findAllStations(cityName, offset, noOfRecords);
+    }
+
+    @Override
+    public List<Station> findAllStationsForAdmin(Long cityID) {
+        return stationDAO.findAllStationsForAdmin(cityID);
     }
 
     @Override
@@ -82,6 +104,11 @@ public class StationServiceI implements StationService {
     @Override
     public void setStationRelevant(Long id) {
         stationDAO.setStationRelevant(id);
+    }
+
+    @Override
+    public void setStationRelevantWithBlockedCity(Long stationID, Long cityID) {
+        stationDAO.setStationRelevantWithBlockedCity(stationID,cityID);
     }
 
     @Override

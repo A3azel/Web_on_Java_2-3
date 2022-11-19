@@ -24,6 +24,7 @@
     <main>
         <div class="row mainRow">
             <form action="controller" method="post">
+                <input type="hidden" name="action" value="addCity">
                 <div class="col-lg-6" style="margin: 20px">
                     <div class="card mb-4">
                         <div class="card-body">
@@ -34,8 +35,8 @@
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" name="cityName"/>
                                     <c:choose>
-                                        <c:when test="${requestScope.addingCityArror != null}">
-                                            <p style="color: red">${requestScope.addingCityArror}</p>
+                                        <c:when test="${requestScope.cityError != null}">
+                                            <p style="color: red">${requestScope.cityError}</p>
                                         </c:when>
                                     </c:choose>
                                 </div>

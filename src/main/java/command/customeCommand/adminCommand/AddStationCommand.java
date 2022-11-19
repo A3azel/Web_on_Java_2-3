@@ -1,6 +1,7 @@
 package command.customeCommand.adminCommand;
 
 import command.Command;
+import entity.User;
 import service.ServiceFactory;
 import service.serviceInterfaces.StationService;
 
@@ -16,6 +17,11 @@ import java.util.Map;
 public class AddStationCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user==null || !user.getUserRole().equals("ADMIN")){
+            request.getRequestDispatcher("login.jsp").forward(request,response);
+            return;
+        }
         Long cityID = Long.valueOf(request.getParameter("cityID"));
         String cityName = request.getParameter("cityName");
         request.setAttribute("cityID",cityID);
@@ -41,4 +47,5 @@ public class AddStationCommand implements Command {
         }
         response.sendRedirect("controller?action=allStationsForAdmin&cityName="+ URLEncoder.encode(cityName, StandardCharsets.UTF_8));
     }
+
 }

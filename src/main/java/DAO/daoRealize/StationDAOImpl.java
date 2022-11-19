@@ -7,6 +7,8 @@ import DAO.daoInterface.StationDAO;
 import entity.City;
 import entity.Station;
 import helpDAO.DAOHelperMethods;
+import service.ServiceFactory;
+import service.serviceInterfaces.CityService;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -30,6 +32,7 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
     private static final String FIND_STATION = "SELECT * FROM station WHERE station_name = ?";
     private static final String FIND_STATION_BY_ID = "SELECT * FROM station WHERE ID = ?";
     private static final String FIND_ALL_STATION = "SELECT * FROM station where city_id = ? limit ?,?";
+    private static final String FIND_ALL_STATION_FOR_ADMIN = "SELECT * FROM station where city_id = ?";
     private static final String FIND_ALL_STATION_COUNT = "SELECT COUNT(id) AS k FROM station where city_id = ?";
     private static final String FIND_STATION_BY_CITY_ID_AND_STATION_NAME = "SELECT * FROM station WHERE station_name = ? AND city_id = ?";
     private static final String DELETE_STATION_BY_ID = "DELETE FROM station WHERE id = ?";
@@ -91,8 +94,8 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             preparedStatement.setTimestamp(1,timestamp);
             preparedStatement.setString(2,station.getStationName());
             preparedStatement.setBoolean(3, station.isRelevant());
-            preparedStatement.setLong(4,station.getID());
-            preparedStatement.setLong(5,station.getCity().getID());
+            preparedStatement.setLong(4,station.getCity().getID());
+            preparedStatement.setLong(5,station.getID());
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {
@@ -123,6 +126,36 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             preparedStatement.setLong(1,city.getID());
             preparedStatement.setInt(2,offset);
             preparedStatement.setInt(3,noOfRecords);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                stationList.add(helpToBuildStation(rs));
+            }
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+        return stationList;
+    }
+
+    @Override
+    public List<Station> findAllStationsForAdmin(Long cityID) {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        List<Station> stationList = new ArrayList<>();
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            preparedStatement = con.prepareStatement(FIND_ALL_STATION_FOR_ADMIN);
+            preparedStatement.setLong(1,cityID);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
                 stationList.add(helpToBuildStation(rs));
@@ -273,6 +306,34 @@ public class StationDAOImpl extends AbstractDAO implements StationDAO {
             boolean relevant = findStationByID(id).isRelevant();
             preparedStatement.setBoolean(1,!relevant);
             preparedStatement.setLong(2,id);
+            preparedStatement.executeUpdate();
+            con.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DAOHelperMethods.rollback(con);
+        }finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DAOHelperMethods.closeCon(preparedStatement);
+            DAOHelperMethods.closeCon(con);
+        }
+    }
+
+    @Override
+    public void setStationRelevantWithBlockedCity(Long stationID, Long cityID) {
+        Connection con = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            con.setAutoCommit(false);
+            con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            preparedStatement = con.prepareStatement(SET_STATION_RELEVANT);
+            CityService cityService = ServiceFactory.getInstance().getCityService();
+            boolean relevant = cityService.findCityByID(cityID).isRelevant();
+            preparedStatement.setBoolean(1,!relevant);
+            preparedStatement.setLong(2,stationID);
             preparedStatement.executeUpdate();
             con.commit();
         } catch (SQLException e) {

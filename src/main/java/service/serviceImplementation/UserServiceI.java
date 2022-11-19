@@ -40,36 +40,36 @@ public class UserServiceI implements UserService {
         HashMap<String,String> validationErrors = new HashMap<>();
 
         if(!Validator.isFirstNameOrLastNameValid(firstName)){
-            validationErrors.put("firstNameError","First name is invalid");
+            validationErrors.put("firstNameError","Не валідне ім'я");
         }
         if(!Validator.isFirstNameOrLastNameValid(lastName)){
-            validationErrors.put("lastNameError","Last name is invalid");
+            validationErrors.put("lastNameError","Не валідне прізвище");
         }
         if(!Validator.isUsernameValid(username)){
-            validationErrors.put("usernameError","Username is invalid");
+            validationErrors.put("usernameError","Не валідний нікнейм (від 4 до 64 символів)");
         }
         if(!Validator.isEmailValid(email)){
-            validationErrors.put("emailError","Email is invalid");
+            validationErrors.put("emailError","Не валідна пошта");
         }
         if(!Validator.isPasswordValid(password)){
-            validationErrors.put("firstPasswordError","Length must be from 8 to 64 characters");
+            validationErrors.put("firstPasswordError","Довжина паролю повинна бути від 8 до 64 символів");
         }
         if(!Validator.isPasswordValid(submitPassword)){
-            validationErrors.put("secondPasswordError","Length must be from 8 to 64 characters");
+            validationErrors.put("secondPasswordError","Довжина паролю повинна бути від 8 до 64 символів");
         }
         if(!Validator.isTheSamePasswords(password, submitPassword)){
-            validationErrors.put("passwordsError","Different passwords");
+            validationErrors.put("passwordsError","Паролі відрізняються");
         }
 
         if (!validationErrors.isEmpty()){
             return validationErrors;
         }
 
-        if(!Validator.isUserExist(username)){
-            validationErrors.put("userAlreadyExist","An account with the selected name already exists");
+        if(Validator.isUserExist(username)){
+            validationErrors.put("usernameError","Даний нікнейм вже зарезервований");
         }
-        if(!Validator.isEmailExist(email)){
-            validationErrors.put("emailAlreadyExist","An account with the selected email already exists");
+        if(Validator.isEmailExist(email)){
+            validationErrors.put("emailError","Дана пошта вже зарезервована");
         }
 
         if (!validationErrors.isEmpty()){

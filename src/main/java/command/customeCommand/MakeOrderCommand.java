@@ -29,21 +29,20 @@ public class MakeOrderCommand implements Command {
         OrderService orderService = ServiceFactory.getInstance().getOrderService();
         Map<String,String> errorMap =orderService.addOrder(user,routeID,countOfTickets,ticketPrise);
         if(!errorMap.isEmpty()){
-            passToErrorPage(request,response,errorMap);
+            passToErrorPage(request,response,errorMap,routeID);
             return;
         }
         request.getSession().setAttribute("user",userService.findUserByUsername(user.getUsername()));
         response.sendRedirect("personalOffice.jsp");
     }
 
-    public void passToErrorPage(HttpServletRequest request, HttpServletResponse response, Map<String,String> errorMap){
+    public void passToErrorPage(HttpServletRequest request, HttpServletResponse response, Map<String,String> errorMap,Long id){
         for (HashMap.Entry<String, String> ent : errorMap.entrySet()){
             request.setAttribute(ent.getKey(), ent.getValue());
         }
         try {
-            //request.getRequestDispatcher("issuingTicket.jsp").forward(request,response);
-            response.sendRedirect("issuingTicket.jsp");
-        } catch (IOException e) {
+            request.getRequestDispatcher("controller?action=order&id="+id).forward(request,response);
+        } catch (IOException | ServletException e) {
             e.printStackTrace();
         }
     }

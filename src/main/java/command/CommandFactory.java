@@ -43,6 +43,7 @@ public class CommandFactory {
         commands.put("addRoute",new AddRouteCommand());
         commands.put("userInfo",new UserInfoCommand());
         commands.put("updateRoute",new UpdateRouteCommand());
+        commands.put("updateStation",new UpdateStationCommand());
     }
 
     public Command getCommand(String commandName) {

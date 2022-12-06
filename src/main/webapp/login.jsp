@@ -12,10 +12,12 @@
 </head>
 
 <body class="gradient-custom">
-<%--<header>
-        <jsp:include page="header.jsp" />
-    </header>--%>
+<header>
+    <jsp:include page="header.jsp" />
+</header>
 <div class="wrapper">
+
+
     <main>
         <div class="logo">
             <!--<img src="https://www.freepnglogos.com/uploads/twitter-logo-png/twitter-bird-symbols-png-logo-0.png" alt="">-->
@@ -45,10 +47,12 @@
             <a href="registration.jsp">Sing up</a>
         </div>
     </main>
+
+
 </div>
-<%--<footer>
-        <jsp:include page="footer.jsp" />
-    </footer>--%>
+<footer>
+    <jsp:include page="footer.jsp" />
+</footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
 
 </script>

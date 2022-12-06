@@ -290,6 +290,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            System.out.println(findUserByID(id).isAccountVerified());
             DAOHelperMethods.closeCon(preparedStatement);
             DAOHelperMethods.closeCon(con);
         }

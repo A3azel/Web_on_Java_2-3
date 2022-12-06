@@ -23,6 +23,11 @@
     </header>
 
     <main>
+        <div class="d-grid gap-1 d-md-flex justify-content-md-center" style="margin: 20px">
+            <form method="get" action="addCity.jsp">
+                <button type="submit" class="btn btn-outline-primary btn-rounded"><i class="bi bi-pencil"></i>Додати</button>
+            </form>
+        </div>
         <table class="table table-bordered table-striped text-center" style="margin: 20px; width: 80%; margin-left: auto; margin-right: auto">
             <thead class="table-info" >
             <tr>

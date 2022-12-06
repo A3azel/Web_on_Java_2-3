@@ -23,7 +23,6 @@ public class TopUpAccountCommand implements Command {
         User user = (User) request.getSession().getAttribute("user");
 
         UserService userService = ServiceFactory.getInstance().getUserService();
-        System.out.println(user.getUsername());
         try {
             userService.topUpAccount(money, user.getUsername());
         } catch (InvalidCountOfMoney e) {

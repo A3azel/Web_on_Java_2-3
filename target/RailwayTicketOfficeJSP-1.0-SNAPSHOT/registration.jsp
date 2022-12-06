@@ -113,16 +113,6 @@
                                             <p style="color: red">${requestScope.passwordsError}</p>
                                         </c:when>
                                     </c:choose>
-                                    <c:choose>
-                                        <c:when test="${requestScope.userAlreadyExist != null}">
-                                            <p style="color: red">${requestScope.userAlreadyExist}</p>
-                                        </c:when>
-                                    </c:choose>
-                                    <c:choose>
-                                        <c:when test="${requestScope.emailAlreadyExist != null}">
-                                            <p style="color: red">${requestScope.emailAlreadyExist}</p>
-                                        </c:when>
-                                    </c:choose>
                                     <div class="mt-4 pt-2">
                                         <input class="btn btn-primary btn-lg" type="submit" value="Sing up" />
                                     </div>

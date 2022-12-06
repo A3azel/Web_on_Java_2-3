@@ -146,7 +146,7 @@
                         <div class="input-group" style="width: 150px">
                             <label for="countOfTickets">Кількість квитків</label>
                             <button type="button" id="minusCount" class="input-group-text">-</button>
-                            <input type="number" class="form-control" id="countOfTickets" name="countOfTickets" min="0"/>
+                            <input type="number" class="form-control" id="countOfTickets" name="countOfTickets" min="1"/>
                             <button type="button" id="plusCount" class="input-group-text" >+</button>
                         </div>
                         <c:choose>
@@ -180,7 +180,7 @@
     $('#minusCount').click(minus);
     let count = $('#countOfTickets');
     let res = document.querySelector("#prise");
-    count.val(0);
+    count.val(1);
 
     let numberOfFreeSeats =  '${countOfFreeTickets}';
     let ticketPrice = '${ticketPrise}'
@@ -195,7 +195,7 @@
     }
 
     function minus() {
-        if(count.val() > 0){
+        if(count.val() > 1){
             count.val(Number($(count).val())-1);
             res.textContent = Number(count.val())*ticketPrice + " ₴";
         }

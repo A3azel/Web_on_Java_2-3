@@ -43,7 +43,9 @@
                     <td>
                         <div class="d-grid gap-3 d-md-flex justify-content-md-center">
                             <form action="controller"  method="get">
-                                <%--<input type="hidden" name="action" value="allStationForAdmin">--%>
+                                <input type="hidden" name="action" value="updateStation">
+                                <input type="hidden" name="stationID" value="${station.ID}">
+                                <input type="hidden" name="cityName" value="${requestScope.cityName}">
                                 <button type="submit" class="btn btn-outline-primary">Редагувати</button>
                             </form>
                             <c:choose>

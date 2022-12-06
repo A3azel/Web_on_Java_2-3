@@ -3,6 +3,6 @@ package DAO;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public interface DBManager {
+public interface CustomDBManager {
     Connection getConnection() throws SQLException;
 }
